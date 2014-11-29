@@ -3,15 +3,17 @@
    ob_start();
    require 'dbHelper.php';
 
-   $dbo = new db();
+   $pdo = new db();
    $errorMessage = '';
-   if (isset($_POST['submit']))
+   if (isset($_POST['btn_submit']))
    {
-       if ($row = $dbo->verifyLogin($_POST['username'], $_POST['password']))
+		//echo "1";
+       if ($row = $pdo->verifyLogin($_POST['txt_user_name'], $_POST['pass_user_password']))
        {
 
-          $_SESSION['userType'] = $row['usertype'];
-          $_SESSION['username'] = $row['username'];
+          //$_SESSION['userType'] = $row['usertype'];
+          $_SESSION['sess_user_name'] = $row['user_name'];
+		  $_SESSION['sess_user_id'] = $row['user_id'];
 
           if ($_SESSION['userType'] == 'admin')
           {
@@ -19,8 +21,8 @@
           }
           else
           {
-             header('Location: ./profile.php?user=' . $row['username']);
-           }
+             header('Location: ./profile.php?user_name=' . $row['user_name']);
+          }
        }
        else
            $errorMessage = $errorMessage . ' - Incorrect username or password';
@@ -88,10 +90,10 @@
       </ul>
       <form class="form-signin" action="" method="post">
         <h2 class="form-signin-heading">Sign In</h2>
-        <input type="text" class="input-block-level" placeholder="Username" name="username">
-        <input type="password" class="input-block-level" placeholder="Password" name="password">
+        <input type="text" class="input-block-level" placeholder="Username" name="txt_user_name">
+        <input type="password" class="input-block-level" placeholder="Password" name="pass_user_password">
         <center>
-        <button class="btn btn-large btn-primary" type="submit"name="submit">Sign in</button>
+        <button class="btn btn-large btn-primary" type="submit" name="btn_submit">Sign in</button>
         </center>
       </form>
       <center><a href="index.php">Home</a></center>

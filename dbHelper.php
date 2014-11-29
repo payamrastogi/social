@@ -8,7 +8,7 @@
     */
     class db
     {
-        private $dbo = null;
+        private $pdo = null;
 
         //private
         /***********************************************/
@@ -16,20 +16,19 @@
         public function __construct()
         {
             require_once 'database_connect.php';
-            $this->dbo = new PDO("$databaseEngine:host=$databaseHost;dbname=$databaseName",$databaseUsername, $databasePassword);
+            $this->pdo = new PDO("$databaseEngine:host=$databaseHost;dbname=$databaseName",$databaseUsername, $databasePassword);
         }
 
-        public function verifyLogin($username, $password)
+        public function verifyLogin($user_name, $user_password)
         {
             /**
             *   Returns false if can't log in else returns the user data
             */
-            $queryString = sprintf("SELECT * FROM users WHERE username='%s'", $username);
-
-            $query = $this->dbo->query($queryString);
+            $queryString = sprintf("SELECT * FROM users WHERE user_name='%s'", $user_name);
+            $query = $this->pdo->query($queryString);
             $row = $query->fetch(PDO::FETCH_ASSOC);
 
-            if ($row && $row['password'] == $password)
+            if ($row && $row['user_password'] == $user_password)
                 return $row;
             else
                 return false;
@@ -41,7 +40,7 @@
         public function userExists($username)
         {
             $queryString ="SELECT * FROM `users` WHERE username = '$username'";
-            $query = $this->dbo->query($queryString);
+            $query = $this->pdo->query($queryString);
 
             return ($query->rowCount() > 0) ? true : false;
         }
@@ -52,15 +51,15 @@
             *   Returns a query
             */
             $queryString = "SELECT * FROM `users` INNER JOIN userDetail on users.username=userDetail.username";
-            $query = $this->dbo->query($queryString);
+            $query = $this->pdo->query($queryString);
 
             return $query;
         }
 
-        public function getUserDetails($username)
+        public function getUserDetails($user_id)
         {
-            $queryString = "SELECT * FROM users INNER JOIN userDetail on users.username=userDetail.username WHERE users.username LIKE '$username'";
-            $query = $this->dbo->query($queryString);
+            $queryString = "SELECT * FROM users INNER JOIN userDetails on users.user_id=userDetails.user_id WHERE users.user_id LIKE '$user_id'";
+            $query = $this->pdo->query($queryString);
 
             return $query;
         }
@@ -93,7 +92,7 @@
             elseif($start != -1 && $goFor != -1)
                 $queryString = $queryString .  " LIMIT $start, $goFor";
 
-            $query = $this->dbo->query($queryString);
+            $query = $this->pdo->query($queryString);
 
             return $query;
         }
@@ -102,7 +101,7 @@
         {
             $queryString = sprintf("SELECT * FROM photos WHERE owner='%s' ORDER BY id DESC",
                 $username);
-            $query = $this->dbo->query($queryString);
+            $query = $this->pdo->query($queryString);
 
             return $query;
         }
@@ -110,7 +109,7 @@
         public function changePassword($username, $newPassword)
         {
             $queryString = "UPDATE users SET password='$newPassword' WHERE username = '$username'";
-            $query = $this->dbo->query($queryString);
+            $query = $this->pdo->query($queryString);
         }
 
         public function deleteUser($username)
@@ -118,7 +117,7 @@
             if ($this->userExists($username))
             {
                 $queryString = "DELETE FROM users WHERE username = '$username'";
-                $query = $this->dbo->query($queryString);
+                $query = $this->pdo->query($queryString);
             }
             else
                 return false;
@@ -139,7 +138,7 @@
                 $tableName = "users";
             $queryString = "UPDATE $tableName SET $type='$newValue' WHERE username='$username'";
 
-            $query = $this->dbo->query($queryString);
+            $query = $this->pdo->query($queryString);
         }
 
         public function createUser($username, $password, $email)
@@ -148,11 +147,11 @@
             {
                 $queryString = "INSERT INTO users (username, password, userType) VALUES
                 ('$username', '$password', 'user')";
-                $query = $this->dbo->query($queryString);
+                $query = $this->pdo->query($queryString);
 
                 $queryString = "INSERT INTO userDetail (username, email) VALUES
                 ('$username', '$email')";
-                $query = $this->dbo->query($queryString);
+                $query = $this->pdo->query($queryString);
 
                 return true;
             }
@@ -165,7 +164,7 @@
             $queryString = sprintf(
             "INSERT INTO photos (owner, album, name, url) VALUES ('%s','%s', '%s','%s')",
             $username, $album, $name, $url);
-            $query = $this->dbo->query($queryString);
+            $query = $this->pdo->query($queryString);
         }
     }
 ?>

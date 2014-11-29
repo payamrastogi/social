@@ -24,7 +24,7 @@ function curPageName() {
                 <span class="icon-circle-arrow-down"></span>
             </a>
 
-            <a href="index.php" class="brand">Social Network</a>
+            <a href="index.php" class="brand">Moozik!</a>
 
             <div class="nav-collapse collapse">
 

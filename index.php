@@ -35,7 +35,7 @@ if (isset($_GET['success'])) {
         ?>
         <div class="hero-unit">
           <h1>Welcome!</h1>
-          <p>The open source social network</p>
+          <p>Your Online Music Community</p>
           <p>
             <a href="login.php" class="btn btn-primary btn-large">
               Login

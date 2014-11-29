@@ -10,11 +10,11 @@
       <div class="container">
         <p class="muted credit">
             Site Designed and Built By
-            <a target="_blank" href="http://www.matthewoneill.com">Matthew O'Neill </a>
+            <a target="_blank" href="http://coddicted.com/about-us/">Payam Rastogi </a>
             With
             <a target="_blank" href="http://twitter.github.io/bootstrap">Bootstrap</a>
             and PHP.
-            View the <a href="http://github.com/matthew14/social">GitHub</a> repo.
+            View the <a href="https://github.com/payamrastogi/social">GitHub</a> repo.
         </p>
       </div>
     </div>

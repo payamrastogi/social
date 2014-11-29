@@ -3,37 +3,38 @@
     session_start();
     require 'dbHelper.php';
     $dbo = new db();
-    if (! isset($_GET['user']))
+    if (! isset($_GET['user_name']))
     {
-        if (! isset($_SESSION['username']))
+        if (! isset($_SESSION['sess_user_name']))
         {
             header('Location: ./logout.php');
         }
         else
-            $user = $_SESSION['username'];
+            $user_name = $_SESSION['sess_user_name'];
     }
     else
     {
-        $user = $_GET['user'];
+        $user_name = $_GET['user_name'];
+		$user_id = $_SESSION['sess_user_id'];
     }
     /***********************************************/
     //Get user's details
 
-    $query = $dbo->getUserDetails($user);
+    $query = $dbo->getUserDetails($user_id);
 
     if ($row = $query->fetch(PDO::FETCH_ASSOC))
     {
-        $fullName = $row['firstName'] . ' ' . $row['surname'];
+        $fullName = $row['user_fname'] . ' ' . $row['user_lname'];
 
         $now = new DateTime('now');
-        $birth = new DateTime($row['dob']);
+        $birth = new DateTime($row['user_dob']);
         $interval = $now->diff($birth);
         $age = $interval->format('%Y');
 
-        $about = $row['about'];
-        $profilePic = $row['picture'];
-        $location = $row['location'];
-        $gender = $row['gender'];
+        //$about = $row['about'];
+        //$profilePic = $row['picture'];
+        //$location = $row['location'];
+        //$gender = $row['gender'];
     }
 
     /* ********************************************** */
@@ -99,8 +100,8 @@
 
     /*************************************************/
     //Get the user's images
-    $userImagesQuery = $dbo->getUserPhotos($user);
-    $numberOfImages = $userImagesQuery->rowCount();
+    //$userImagesQuery = $dbo->getUserPhotos($user);
+    //$numberOfImages = $userImagesQuery->rowCount();
 
 ?>
 
@@ -139,7 +140,7 @@
 
         <!-- Let's show an upload dialog if the user is on their own photos page only. -->
         <?php
-            if (isset($_SESSION['username']) && $user == $_SESSION['username'])
+            if (isset($_SESSION['sess_user_name']) && $user_name == $_SESSION['sess_user_name'])
             {?>
 
                 <h1 style=\"font-size: 60px;\"><?php echo $fullName ?>'s Photos</h1>
