@@ -63,6 +63,13 @@
 
             return $query;
         }
+		
+		public function getUserId($user_name)
+		{
+			$queryString = "SELECT * FROM users WHERE users.user_name LIKE '$user_name'";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
 
         public function searchUsers($searchTerm, $start, $goFor)
         {
@@ -78,22 +85,22 @@
             $goFor = (int)$goFor;
 
             //base search:
-            $queryString = "SELECT * FROM users INNER JOIN userDetail on users.username=userDetail.username";
+            $queryString = "SELECT * FROM users INNER JOIN userDetails on users.user_id=userDetails.user_id";
 
             if (str_replace(' ', '', $searchTerm) != '')
-                $queryString = $queryString . " WHERE users.username LIKE '$searchTerm'";
+                $queryString = $queryString . " WHERE users.user_name LIKE '%$searchTerm%'";
 
-            if ($goFor != -1 && $start == -1)
-                $queryString = $queryString .  " LIMIT 0, $goFor";
+            //if ($goFor != -1 && $start == -1)
+            //    $queryString = $queryString .  " LIMIT 0, $goFor";
 
-            elseif ($start != -1 && $goFor == -1)
-                $queryString = $queryString .  " LIMIT $start, 2372662636281763";
+            //elseif ($start != -1 && $goFor == -1)
+            //    $queryString = $queryString .  " LIMIT $start, 2372662636281763";
 
-            elseif($start != -1 && $goFor != -1)
-                $queryString = $queryString .  " LIMIT $start, $goFor";
+            //elseif($start != -1 && $goFor != -1)
+            //    $queryString = $queryString .  " LIMIT $start, $goFor";
 
             $query = $this->pdo->query($queryString);
-
+			//echo $query;
             return $query;
         }
 

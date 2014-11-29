@@ -5,7 +5,7 @@
         require 'dbHelper.php';
         $dbo = new db();
         $queryAll = $dbo->searchUsers($term, -1, -1); //Used for counting rows
-
+		//echo "hello".$queryAll;
         $numResults = $queryAll->rowCount();
 
         $resultsPerPage = 2;
@@ -42,13 +42,13 @@
 
             while ($row = $query->fetch(PDO::FETCH_ASSOC))
             {?>
-                <a href="./profile.php?user=<?php echo $row['username']?>">
+                <a href="./profile.php?user_name=<?php echo $row['user_name']?>&redirected=true">
                     <div class="row-fluid" style="margin-top: 20px;">
                         <div class="span5 well">
                             <img src="<?php echo $row['picture'] ?>" />
                         </div>
                         <div class="span7 well">
-                            <h4><?php echo $row['firstName'] . ' ' . $row['surname']; ?></h4>
+                            <h4><?php echo $row['user_fname'] . ' ' . $row['user_lname']; ?></h4>
                             <p>Location: <?php echo $row['location']; ?></p>
                             <p>Gender: <?php echo $row['gender']; ?></p>
                             <p>About: <?php echo $row['about'] ?></p>
