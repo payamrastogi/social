@@ -5,7 +5,7 @@
     $dbo = new db();
 
     if (isset($_SESSION['sess_user_id']))
-        $userid = $_SESSION['sess_user_id'];
+        $user_id = $_SESSION['sess_user_id'];
     else
         header('Location: ./login.php');
 
@@ -15,56 +15,64 @@
     if (isset($_POST['about']) && $_POST['about'] != '')
     {
         $about = $_POST['user_description'];
-        $dbo->updateProfileInfo($userid, $about, 'user_description');
-        $successMessage = $successMessage . 'Updated About Me ' ;
+        $dbo->updateProfileInfo($user_id, $about, 'user_description');
+        $successMessage = $successMessage . '- Updated About Me ' ;
     }
-    if (isset($_POST['firstName']) && $_POST['firstName'] != '')
+    if (isset($_POST['txt_user_fname']) && $_POST['txt_user_fname'] != '')
     {
-        $firstName = $_POST['firstName'];
-        $dbo->updateProfileInfo($username, $firstName, 'firstName');
+        $user_fname = $_POST['txt_user_fname'];
+        $dbo->updateProfileInfo($user_id, $user_fname, 'user_fname');
         $successMessage = $successMessage . '- Updated First Name ';
     }
-    if (isset($_POST['surname']) && $_POST['surname'] != '')
+    if (isset($_POST['txt_user_lname']) && $_POST['txt_user_lname'] != '')
     {
-        $surname = $_POST['surname'];
-        $dbo->updateProfileInfo($username, $surname, 'surname');
-        $successMessage = $successMessage . '- Updated Surname ';
+        $user_lname = $_POST['txt_user_lname'];
+        $dbo->updateProfileInfo($user_id, $user_lname, 'user_lname');
+        $successMessage = $successMessage . '- Updated Last Name ';
     }
-    if (isset($_POST['gender']) && $_POST['gender'] != '')
+    if (isset($_POST['rd_user_gender']) && $_POST['rd_user_gender'] != '')
     {
-        $gender = $_POST['gender'];
-        $dbo->updateProfileInfo($username, $gender, 'gender');
+        $user_gender = $_POST['rd_user_gender'];
+        $dbo->updateProfileInfo($user_id, $user_gender, 'user_gender');
         $successMessage = $successMessage . '- Updated Gender ';
     }
-    if (isset($_POST['location']) && $_POST['location'] != '')
+    if (isset($_POST['txt_user_street']) && $_POST['txt_user_street'] != '')
     {
-        $location = $_POST['location'];
-        $dbo->updateProfileInfo($username, $location, 'location');
-        $successMessage = $successMessage . '- Updated Location ';
+        $user_street = $_POST['txt_user_street'];
+        $dbo->updateProfileInfo($user_id, $user_street, 'user_street');
+        $successMessage = $successMessage . '- Updated Street ';
     }
-    if (isset($_POST['dob'])) {
-        $dob = $_POST['dob'];
-        if ($dob != '')
+    if (isset($_POST['cal_user_dob'])) {
+        $user_dob = $_POST['cal_user_dob'];
+        if ($user_dob != '')
         {
-            $dbo->updateProfileInfo($username, $dob, 'dob');
+            $dbo->updateProfileInfo($user_id, $user_dob, 'user_dob');
             $successMessage = $successMessage . '- Updated Date of Birth ';
         }
     }
-    if (isset($_POST['password']) && isset($_POST['confirmPassword']))
+    if (isset($_POST['txt_user_password']) && isset($_POST['txt_user_conf_password']))
     {
-        $password = $_POST['password'];
-        $confirmPassword = $_POST['confirmPassword'];
+        $user_password = $_POST['txt_user_password'];
+        $user_conf_password = $_POST['txt_user_conf_password'];
+		echo $user_password;
+		echo $user_conf_password;
 
-        if ($password != $confirmPassword)
+        if ($user_password != $user_conf_password)
             $errorMessage = $errorMessage ." - Passwords must match. ";
-        elseif (strlen($password) < 6 && strlen($password) > 0) {
+        elseif (strlen($user_password) < 6 && strlen($user_password) > 0) {
             $errorMessage = $errorMessage ." - Passwords must be 6 characters or more. ";
         }
-        elseif(strlen($password) > 0)
+        elseif(strlen($user_password) > 0)
         {
-            $dbo->updateProfileInfo($username, $password, 'password');
+            $dbo->updateProfileInfo($user_id, $user_password, 'user_password');
             $successMessage = $successMessage . '- Updated Password ';
         }
+    }
+	if (isset($_POST['txt_user_email']) && $_POST['txt_user_email'] != '')
+    {
+        $user_email = $_POST['txt_user_email'];
+        $dbo->updateProfileInfo($user_id, $user_email, 'user_email');
+        $successMessage = $successMessage . '- Updated email ' ;
     }
     if($successMessage == '' && $errorMessage == '' && isset($_POST['submit']))
         $blueMessage = 'Nothing was updated'
@@ -111,81 +119,128 @@
                 </div>
             </div>
             <div class="row-fluid" style="margin-top: 20px;">
-                <div class="span4 well">
-                    <h2>About Me</h2>
-                        <div class="control-group">
-                            <label class="control-label" for="txt_user_description">About</label>
-                            <div class="controls">
-                              <textarea maxlength="15000" rows="12" class="input-xlarge" id="txt_user_description" name="txt_user_description" placeholder="About Me"></textarea>
-                            </div>
-                        </div>
-                </div>
-
-                <div class="span4 well">
-                    <h2>Details</h2>
-                    <h4>Not all fields required</h4>
-                        <div class="control-group">
-                            <!--<label class="control-label" for="txt_user_fname">First Name</label>-->
-                            <div class="controls">
-                              <input id="txt_user_fname" type="text" class="input-xlarge" name="txt_user_fname" placeholder="First Name"/>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <!--<label class="control-label" for="txt_user_lname">Last Name</label>-->
-                            <div class="controls">
-                              <input id="txt_user_lname" type="text" class="input-xlarge" name="txt_user_lname" placeholder="Last Name"/>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <!--<label class="control-label" for="rd_user_gender">Gender</label>-->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Login Details</h3>
+					</div>
+					<div class="panel-body">
+						<div class="col-lg-3">
+							<div class="input-group">
+								<input type="text" class="form-control" name="txt_user_password" placeholder="Password"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+						<div class="col-lg-3">
+							<div class="input-group">
+								<input type="text" class="form-control" name="txt_user_conf_password" placeholder="Confirm Password"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+					</div><!-- panel-body -->
+					<div class="panel-body">
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<input type="checkbox">
+								</span>
+								<input type="email" class="form-control" name="txt_user_email" placeholder="Email"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+					</div><!-- panel-body -->
+				</div><!-- Panel Profile Details -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Profile Details</h3>
+					</div>
+					<div class="panel-body">
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<input type="checkbox">
+								</span>
+								<input type="text" class="form-control" name="txt_user_fname" placeholder="First Name"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<input type="checkbox">
+								</span>
+								<input type="text" class="form-control" name="txt_user_lname" placeholder="Last Name"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+					</div><!-- panel-body -->
+					<div class="panel-body">
+						<div class="col-lg-6">
 							<label class="radio-inline">
-								<input type="radio" name="rd_user_gender" id="rd_user_gender_male" value="male"> male
+								<input type="radio" name="rd_user_gender" id="rd_user_gender_male" value="male"> Male
 							</label>
 							<label class="radio-inline">
-								<input type="radio" name="rd_user_gender" id="rd_user_gender_female" value="female"> female
+								<input type="radio" name="rd_user_gender" id="rd_user_gender_female" value="female"> Female
 							</label>
-                        </div>
-                        <div class="control-group">
-                            <!--<label class="control-label" for="txt_user_country">Country</label>-->
+							<label class="radio-inline">
+								<input type="radio" name="rd_user_gender" id="rd_user_gender_undisclosed" value="donotdisclose"> Do not disclose
+							</label>
+						</div><!-- /.col-lg-3 -->
+					</div><!-- panel-body -->
+					<div class="panel-body">
+						<div class="col-lg-3">
+							<label class="control-label" for="cal_user_dob">Date of Birth</label>
                             <div class="controls">
-                              <input id="txt_user_country" type="text" class="input-xlarge" name="txt_user_country" placeholder="Country"/>
+                              <input id="cal_user_dob" type="date" class="form-control" name="cal_user_dob" placeholder="Date of Birth"/>
                             </div>
-                        </div>
-						<div class="control-group">
-                            <!--<label class="control-label" for="txt_user_state">State</label>-->
-                            <div class="controls">
-                              <input id="txt_user_state" type="text" class="input-xlarge" name="txt_user_state" placeholder="State"/>
-                            </div>
-                        </div>
-						<div class="control-group">
-                            <!--<label class="control-label" for="txt_user_city">City</label>-->
-                            <div class="controls">
-                              <input id="txt_user_city" type="text" class="input-xlarge" name="txt_user_city" placeholder="City"/>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="inputDOB">Date of Birth</label>
-                            <div class="controls">
-                              <input id="inputDOB" type="date" class="input-xlarge" name="dob" placeholder="Date of Birth"/>
-                            </div>
-                        </div>
-                </div>
-                <div class="span4 well">
-                    <h2>Login Details</h2>
-                    <h4>Not all fields required</h4>
-                        <div class="control-group">
-                            <label class="control-label" for="inputPassword">New Password</label>
-                            <div class="controls">
-                              <input id="inputPassword" type="password" class="input-xlarge" name="password" placeholder="New Password"/>
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="inputConfirmPassword">Confirm Password</label>
-                            <div class="controls">
-                              <input id="inputConfirmPassword"class="input-xlarge" type="password" name="confirmPassword" placeholder="Confirm Password"/>
-                            </div>
-                        </div>
-                </div>
+						</div><!-- /.col-lg-3 -->
+					</div><!-- panel-body -->
+				</div><!-- Panel Profile Details -->
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Address</h3>
+					</div>
+					<div class="panel-body">
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<input type="checkbox">
+								</span>
+								<input type="text" class="form-control" name="txt_user_street" placeholder="Street"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<input type="checkbox">
+								</span>
+								<input type="text" class="form-control" name="txt_user_city" placeholder="City"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+					</div><!-- panel-body -->
+					<div class="panel-body">
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<input type="checkbox">
+								</span>
+								<input type="text" class="form-control" name="txt_user_state" placeholder="State"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<input type="checkbox">
+								</span>
+								<input type="text" class="form-control" name="txt_user_country" placeholder="Country"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+					</div><!-- panel-body -->
+					<div class="panel-body">
+						<div class="col-lg-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<input type="checkbox">
+								</span>
+								<input type="text" class="form-control" name="txt_user_zipcode" placeholder="Zipcode"/>
+							</div><!-- /input-group -->
+						</div><!-- /.col-lg-3 -->
+					</div><!-- panel body -->
+				</div><!-- Panel Address Details -->
             </div>
         </form>
         </div>

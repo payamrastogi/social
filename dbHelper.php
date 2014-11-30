@@ -130,20 +130,20 @@
                 return false;
         }
 
-        public function updateProfileInfo($username, $newValue, $type)
+        public function updateProfileInfo($user_id, $newValue, $type)
         {
             /**
             *   $type:
             *       the field to updateProfileInfo
             */
-
+			$tableName ="";
             $detailFields = array('user_desc', 'user_gender', 'user_fname', 'user_lname', 'user_city','user_state','user_country','user_zipcode', 'user_dob');
             $userFields = array('user_password');
             if (in_array($type, $detailFields))
                 $tableName = "userdetails";
             elseif (in_array($type, $userFields))
                 $tableName = "users";
-            $queryString = "UPDATE $tableName SET $type='$newvalue' WHERE username='$username'";
+            $queryString = "UPDATE".$tableName." SET $type='$newValue' WHERE user_id='$user_id'";
 
             $query = $this->pdo->query($queryString);
         }

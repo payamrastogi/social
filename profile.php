@@ -24,8 +24,11 @@
     {
         $user_name = $_GET['user_name'];
 		$user_id = $_SESSION['sess_user_id'];
-		$redirected = $_GET['redirected'];
-		$_SESSION['redirected'] = $redirected;
+		if(isset($_GET['redirected']))
+		{
+			$redirected = $_GET['redirected'];
+			$_SESSION['redirected'] = $redirected;
+		}
 		//echo "12".$user_id;
 		if(isset($redirected))
 		{
