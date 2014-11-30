@@ -4,8 +4,8 @@
 
     $dbo = new db();
 
-    if (isset($_SESSION['username']))
-        $username = $_SESSION['username'];
+    if (isset($_SESSION['sess_user_name']))
+        $username = $_SESSION['sess_user_name'];
     else
         header('Location: ./login.php');
 

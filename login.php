@@ -11,7 +11,7 @@
        if ($row = $pdo->verifyLogin($_POST['txt_user_name'], $_POST['pass_user_password']))
        {
 
-          //$_SESSION['userType'] = $row['usertype'];
+          $_SESSION['sess_user_type'] = $row['user_type'];
           $_SESSION['sess_user_name'] = $row['user_name'];
 		  $_SESSION['sess_user_id'] = $row['user_id'];
 

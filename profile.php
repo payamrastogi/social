@@ -3,6 +3,7 @@
     session_start();
     require 'dbHelper.php';
     $dbo = new db();
+	$redirected = '';
 
     if (! isset($_GET['user_name']))
     {

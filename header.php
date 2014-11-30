@@ -45,8 +45,8 @@ function curPageName() {
                         echo'<li class=""><a href="index.php">Home</a></li>
                         <li class=""><a href="contact.php">Contact Us</a></li>';
                         }
-                        if (isset($_SESSION['userType'])) {
-                           if ($_SESSION['userType'] == 'admin') {
+                        if (isset($_SESSION['sess_user_type'])) {
+                           if ($_SESSION['sess_user_type'] == 'admin') {
                                 $cssClass= '';
                                 if(curPageName() == 'admin.php'){
                                     $cssClass = "active";
@@ -54,15 +54,15 @@ function curPageName() {
                                echo "<li class='$cssClass'><a href=\"admin.php\">Admin Panel</a></li>";
                            }
                         }
-                        if (isset($_SESSION['userType']) && ($_SESSION['userType'] == 'user' || $_SESSION['userType'] == 'admin'))
+                        if (isset($_SESSION['sess_user_type']) && ($_SESSION['sess_user_type'] == 'user' || $_SESSION['sess_user_type'] == 'admin'))
                         {
                             $strToPrint = "<li>
-                                    <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"profile.php?user=" . $_SESSION['username'] . "\">
-                                        <i class=\"icon-thumbs-up\"></i> " .  $_SESSION['username'] . "
+                                    <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"profile.php?user_name=" . $_SESSION['sess_user_name'] . "\">
+                                        <i class=\"icon-thumbs-up\"></i> " .  $_SESSION['sess_user_name'] . "
                                         <span class=\"caret\"></span>
                                     </a>
                                     <ul class=\"dropdown-menu\">
-                                        <li><a href=\"profile.php?user=" . $_SESSION['username'] . "\">Profile</a></li>
+                                        <li><a href=\"profile.php?user_name=" . $_SESSION['sess_user_name'] . "\">Profile</a></li>
                                         <li><a href=\"messages.php\">Messages</a></li>
                                         <li><a href=\"settings.php\">Settings</a></li>
                                         <li class=\"divider\"></li>
