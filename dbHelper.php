@@ -137,13 +137,13 @@
             *       the field to updateProfileInfo
             */
 
-            $detailFields = array('about', 'gender', 'firstName', 'surname', 'location', 'dob');
-            $userFields = array('username', 'password');
+            $detailFields = array('user_desc', 'user_gender', 'user_fname', 'user_lname', 'user_city','user_state','user_country','user_zipcode', 'user_dob');
+            $userFields = array('user_password');
             if (in_array($type, $detailFields))
-                $tableName = "userDetail";
+                $tableName = "userdetails";
             elseif (in_array($type, $userFields))
                 $tableName = "users";
-            $queryString = "UPDATE $tableName SET $type='$newValue' WHERE username='$username'";
+            $queryString = "UPDATE $tableName SET $type='$newvalue' WHERE username='$username'";
 
             $query = $this->pdo->query($queryString);
         }

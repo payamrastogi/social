@@ -56,8 +56,8 @@
                     </div>
                 </a>
             <?php } ?>
-            <div class="pagination">
-              <ul>
+            <nav>
+              <ul class="pagination">
 
                 <?php
                 if ($page == 1)
@@ -87,7 +87,7 @@
 
                 ?>
               </ul>
-            </div>
+            </nav>
         </div> <!-- /container -->
         <?php include 'footer.php'; ?>
     </body>

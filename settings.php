@@ -4,8 +4,8 @@
 
     $dbo = new db();
 
-    if (isset($_SESSION['sess_user_name']))
-        $username = $_SESSION['sess_user_name'];
+    if (isset($_SESSION['sess_user_id']))
+        $userid = $_SESSION['sess_user_id'];
     else
         header('Location: ./login.php');
 
@@ -14,8 +14,8 @@
 
     if (isset($_POST['about']) && $_POST['about'] != '')
     {
-        $about = $_POST['about'];
-        $dbo->updateProfileInfo($username, $about, 'about');
+        $about = $_POST['user_description'];
+        $dbo->updateProfileInfo($userid, $about, 'user_description');
         $successMessage = $successMessage . 'Updated About Me ' ;
     }
     if (isset($_POST['firstName']) && $_POST['firstName'] != '')
@@ -114,9 +114,9 @@
                 <div class="span4 well">
                     <h2>About Me</h2>
                         <div class="control-group">
-                            <label class="control-label" for="textAreaAbout">About</label>
+                            <label class="control-label" for="txt_user_description">About</label>
                             <div class="controls">
-                              <textarea maxlength="15000" rows="12" class="input-xlarge" id="textAreaAbout" name="about" placeholder="About Me"></textarea>
+                              <textarea maxlength="15000" rows="12" class="input-xlarge" id="txt_user_description" name="txt_user_description" placeholder="About Me"></textarea>
                             </div>
                         </div>
                 </div>
@@ -124,29 +124,43 @@
                 <div class="span4 well">
                     <h2>Details</h2>
                     <h4>Not all fields required</h4>
-
                         <div class="control-group">
-                            <label class="control-label" for="inputFirstName">First Name</label>
+                            <!--<label class="control-label" for="txt_user_fname">First Name</label>-->
                             <div class="controls">
-                              <input id="inputFirstName" type="text" class="input-xlarge" name="firstName" placeholder="First Name"/>
+                              <input id="txt_user_fname" type="text" class="input-xlarge" name="txt_user_fname" placeholder="First Name"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="inputSurname">Surname</label>
+                            <!--<label class="control-label" for="txt_user_lname">Last Name</label>-->
                             <div class="controls">
-                              <input id="inputSurname" type="text" class="input-xlarge" name="surname" placeholder="Surname"/>
+                              <input id="txt_user_lname" type="text" class="input-xlarge" name="txt_user_lname" placeholder="Last Name"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="inputGender">Gender</label>
-                            <div class="controls">
-                              <input id="inputGender" type="text" class="input-xlarge" name="gender" placeholder="Gender"/>
-                            </div>
+                            <!--<label class="control-label" for="rd_user_gender">Gender</label>-->
+							<label class="radio-inline">
+								<input type="radio" name="rd_user_gender" id="rd_user_gender_male" value="male"> male
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="rd_user_gender" id="rd_user_gender_female" value="female"> female
+							</label>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="inputLocation">Location</label>
+                            <!--<label class="control-label" for="txt_user_country">Country</label>-->
                             <div class="controls">
-                              <input id="inputLocation" type="text" class="input-xlarge" name="location" placeholder="Location"/>
+                              <input id="txt_user_country" type="text" class="input-xlarge" name="txt_user_country" placeholder="Country"/>
+                            </div>
+                        </div>
+						<div class="control-group">
+                            <!--<label class="control-label" for="txt_user_state">State</label>-->
+                            <div class="controls">
+                              <input id="txt_user_state" type="text" class="input-xlarge" name="txt_user_state" placeholder="State"/>
+                            </div>
+                        </div>
+						<div class="control-group">
+                            <!--<label class="control-label" for="txt_user_city">City</label>-->
+                            <div class="controls">
+                              <input id="txt_user_city" type="text" class="input-xlarge" name="txt_user_city" placeholder="City"/>
                             </div>
                         </div>
                         <div class="control-group">
@@ -159,12 +173,6 @@
                 <div class="span4 well">
                     <h2>Login Details</h2>
                     <h4>Not all fields required</h4>
-                        <div class="control-group">
-                            <label class="control-label" for="inputusername">New Username</label>
-                            <div class="controls">
-                              <input id="inputusername"class="input-xlarge" type="text" name="username" placeholder="New Username"/>
-                            </div>
-                        </div>
                         <div class="control-group">
                             <label class="control-label" for="inputPassword">New Password</label>
                             <div class="controls">
