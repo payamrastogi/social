@@ -118,10 +118,10 @@
             $goFor = (int)$goFor;
 
             //base search:
-            $queryString = "SELECT following_uid FROM follows";
+            $queryString = "SELECT followed_uid FROM follows";
 
             if (str_replace(' ', '', $user_id) != '')
-                $queryString = $queryString . " WHERE followed_uid = '$user_id'";
+                $queryString = $queryString . " WHERE following_uid = '$user_id'";
 
             if ($goFor != -1 && $start == -1)
 				$queryString = $queryString .  " LIMIT 0, $goFor";
@@ -137,7 +137,19 @@
             return $query;
         }
 		
+		public function unfollowUsers($unfollow_uid, $user_id)
+		{
+			$queryString = "delete FROM follows where following_uid=$user_id and followed_uid=$unfollow_uid";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
 		
+		public function followUsers($follow_uid, $user_id)
+		{
+			$queryString = "Insert into follows(following_uid, followed_uid) values ($user_id, $follow_uid)";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
 
         public function getUserPhotos($username)
         {

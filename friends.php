@@ -3,6 +3,16 @@
 	require 'dbHelper.php';
     $dbo = new db();
 	$user_id = '';
+	$successMessage = '';
+	if(isset($_GET['unfollow_uid']))
+	{
+		$unfollow_uid = $_GET['unfollow_uid'];
+		$user_id = $_SESSION['sess_user_id'];
+		$unfollow_name = $_GET['unfollow_name'];
+		$queryUnfollow = $dbo->unfollowUsers($unfollow_uid, $user_id);
+		$successMessage = $successMessage . '- Unfollowed '.$unfollow_name;
+	}
+	
 	if (!isset($_GET['user_name']))
     {
         if (! isset($_SESSION['sess_user_name']))
@@ -24,8 +34,8 @@
 	//echo "hello".$queryAll;
 	
     $numResults = $queryAll->rowCount();
-	echo "2".$user_id;
-	echo "1".$numResults;
+	//echo "2".$user_id;
+	//echo "1".$numResults;
     $resultsPerPage = 2;
     $numPages = ceil($numResults / $resultsPerPage);
 
@@ -48,28 +58,52 @@
     </head>
 
     <body>
-        <?php include 'header.php'; ?>
-        <div class="container">
-             <h4>Showing <?php echo $resultsPerPage ?> results per page</h4>
+		<?php include 'header.php'; ?>
+		<div class="container" style="position: relative; top: 40px;">
+			<ul class="nav nav-tabs">
+				<li>
+					<a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
+				</li>
+				<li><a href="photos.php?user_name=<?php echo $user_name; ?>">Photos</a></li>
+				<li class="active"><a href="friends.php">Friends</a></li>
+			</ul>
+			<?php
+				if (isset($successMessage) && $successMessage != '')
+					echo "<div class=\"alert alert-success\" id=\"formSuccess\">
+					<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+					<strong>Success! </strong> $successMessage
+					</div>";
+			?>
            <?php
-
             while ($row = $query->fetch(PDO::FETCH_ASSOC))
             {	
-				$following_uid = $row['following_uid'];
-				$query1 = $dbo->getUserDetails($following_uid);
+				$followed_uid = $row['followed_uid'];
+				$query1 = $dbo->getUserDetails($followed_uid);
 				$row_userdetails = $query1->fetch(PDO::FETCH_ASSOC);
 				?>
-                <a href="./profile.php?user_name=<?php echo $row_userdetails['user_name']?>&redirected=true">
-                    <div class="row-fluid" style="margin-top: 20px;">
-                        <div class="span5 well">
-                            <img src="<?php echo $row_userdetails['picture'] ?>" />
-                        </div>
-                        <div class="span7 well">
-                            <h4><?php echo $row_userdetails['user_fname'] . ' ' . $row_userdetails['user_lname']; ?></h4>
-                            <p>Gender: <?php echo $row_userdetails['user_gender']; ?></p>
-                        </div>
-                    </div>
-                </a>
+               <div class="row-fluid" style="margin-top: 20px;">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">
+								<a href="./profile.php?user_name=<?php echo $row_userdetails['user_name']?>&redirected=true">
+									<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+									<?php echo $row_userdetails['user_fname'] . ' ' . $row_userdetails['user_lname']; ?>	
+								</a>
+								<a href="./friends.php?unfollow_uid=<?php echo $row_userdetails['user_id']?>&redirected=trueZ&unfollow_name=<?php echo $row_userdetails['user_name']?>">
+									<span class="glyphicon glyphicon-minus" aria-hidden="true" name="gly_unfollow"></span>
+								</a>
+							</h3>
+							
+						</div>
+						<div class="panel-body">
+							<div class="col-lg-3">
+								<div class="input-group">
+									<p>Gender: <?php echo $row_userdetails['user_gender']; ?></p>
+								</div><!-- /input-group -->
+							</div><!-- /.col-lg-3 -->
+						</div><!-- panel-body -->
+					</div><!-- Panel Profile Details -->
+				</div>
             <?php } ?>
             <nav>
               <ul class="pagination">
