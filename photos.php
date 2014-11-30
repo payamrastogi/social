@@ -3,6 +3,7 @@
     session_start();
     require 'dbHelper.php';
     $dbo = new db();
+	$user_id = '';
     if (! isset($_GET['user_name']))
     {
         if (! isset($_SESSION['sess_user_name']))

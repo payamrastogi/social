@@ -90,19 +90,54 @@
             if (str_replace(' ', '', $searchTerm) != '')
                 $queryString = $queryString . " WHERE users.user_name LIKE '%$searchTerm%'";
 
-            //if ($goFor != -1 && $start == -1)
-            //    $queryString = $queryString .  " LIMIT 0, $goFor";
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
 
-            //elseif ($start != -1 && $goFor == -1)
-            //    $queryString = $queryString .  " LIMIT $start, 2372662636281763";
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
 
-            //elseif($start != -1 && $goFor != -1)
-            //    $queryString = $queryString .  " LIMIT $start, $goFor";
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
 
             $query = $this->pdo->query($queryString);
 			//echo $query;
             return $query;
         }
+		
+		public function getFollowers($user_id, $start, $goFor)
+        {
+            /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "SELECT following_uid FROM follows";
+
+            if (str_replace(' ', '', $user_id) != '')
+                $queryString = $queryString . " WHERE followed_uid = '$user_id'";
+
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+        }
+		
+		
 
         public function getUserPhotos($username)
         {
