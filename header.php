@@ -33,9 +33,9 @@ function curPageName() {
 	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <form class="navbar-form navbar-left" role="search" action="search.php" method="get">
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search" name="term">
+          <input type="text" class="form-control" placeholder="Search for people" name="term">
         </div>
-		</form>
+	</form>
            
                 <ul class="nav navbar-nav navbar-right">
                     <?php

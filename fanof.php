@@ -4,13 +4,13 @@
     $dbo = new db();
 	$user_id = '';
 	$successMessage = '';
-	if(isset($_GET['unfollow_uid']))
+	if(isset($_GET['unfan_band_id']))
 	{
-		$unfollow_uid = $_GET['unfollow_uid'];
+		$unfan_band_id = $_GET['unfan_band_id'];
 		$user_id = $_SESSION['sess_user_id'];
-		$unfollow_name = $_GET['unfollow_name'];
-		$queryUnfollow = $dbo->unfollowUsers($unfollow_uid, $user_id);
-		$successMessage = $successMessage . '- Unfollowed '.$unfollow_name;
+		$unfan_band_name = $_GET['unfan_band_name'];
+		$queryUnfanBand = $dbo->unfanBand($unfan_band_id, $user_id);
+		$successMessage = $successMessage . '- Unfollow '.$unfan_band_name;
 	}
 	
 	if (!isset($_GET['user_name']))
@@ -30,7 +30,7 @@
         $user_name = $_GET['user_name'];
 		$user_id = $_SESSION['sess_user_id'];
     }
-    $queryAll = $dbo->getFollowers($user_id, -1, -1); //Used for counting rows
+    $queryAll = $dbo->getFanOf($user_id, -1, -1); //Used for counting rows
 	//echo "hello".$queryAll;
 	
     $numResults = $queryAll->rowCount();
@@ -46,7 +46,7 @@
 
     $startFrom = ($page - 1) * $resultsPerPage;
 
-    $query = $dbo->getFollowers($user_id, $startFrom, $resultsPerPage);
+    $query = $dbo->getFanOf($user_id, $startFrom, $resultsPerPage);
  ?>
 
 <!DOCTYPE html>
@@ -54,7 +54,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Following</title>
+        <title>Fan of</title>
     </head>
 
     <body>
@@ -64,33 +64,41 @@
 				<li>
 					<a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
 				</li>
-				<li class="active"><a href="friends.php">Friends</a></li>
-				<li class=""><a href="fanof.php">Fan of</a></li>
+				<li class=""><a href="friends.php">Following</a></li>
+				<li class="active"><a href="fanof.php">Fan of</a></li>
 				<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
 			</ul>
+			<div class="container" style="position: relative; top: 10px;">
+				<form class="navbar-form navbar-left" role="search" action="bandSearch.php" method="get">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="Search bands" name="searchBandName">
+						</div>
+				</form>
+			</div>
 			<?php
 				if (isset($successMessage) && $successMessage != '')
-					echo "<div class=\"alert alert-success\" id=\"formSuccess\">
+					echo "<div class=\"alert alert-success\" id=\"formSuccess\" style=\"position: relative; top: 10px;\">
 					<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
 					<strong>Success! </strong> $successMessage
 					</div>";
 			?>
            <?php
+			
             while ($row = $query->fetch(PDO::FETCH_ASSOC))
             {	
-				$followed_uid = $row['followed_uid'];
-				$query1 = $dbo->getUserDetails($followed_uid);
-				$row_userdetails = $query1->fetch(PDO::FETCH_ASSOC);
+				$band_id = $row['band_id'];
+				$query1 = $dbo->getBandDetails($band_id);
+				$row_banddetails = $query1->fetch(PDO::FETCH_ASSOC);
 				?>
-               <div class="row-fluid" style="margin-top: 20px;">
+				<div class="row-fluid" style="margin-top: 20px;">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h3 class="panel-title">
-								<a href="./profile.php?user_name=<?php echo $row_userdetails['user_name']?>&redirected=true">
-									<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-									<?php echo $row_userdetails['user_fname'] . ' ' . $row_userdetails['user_lname']; ?>	
+								<a href="./band.php?band_name=<?php echo $row_banddetails['band_name']?>&redirected=true">
+									<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
+									<?php echo $row_banddetails['band_name']; ?>	
 								</a>
-								<a href="./friends.php?unfollow_uid=<?php echo $row_userdetails['user_id']?>&redirected=trueZ&unfollow_name=<?php echo $row_userdetails['user_name']?>">
+								<a href="./fanof.php?unfan_band_id=<?php echo $row_banddetails['band_id']?>&redirected=true&unfan_band_name=<?php echo $row_banddetails['band_name']?>">
 									<span class="glyphicon glyphicon-minus" aria-hidden="true" name="gly_unfollow"></span>
 								</a>
 							</h3>
@@ -99,7 +107,14 @@
 						<div class="panel-body">
 							<div class="col-lg-3">
 								<div class="input-group">
-									<p>Gender: <?php echo $row_userdetails['user_gender']; ?></p>
+									<p>Website: <a href="<?php echo $row_banddetails['band_website']; ?>" target="_blank"><?php echo $row_banddetails['band_website']; ?></p></a>
+								</div><!-- /input-group -->
+							</div><!-- /.col-lg-3 -->
+						</div><!-- panel-body -->
+						<div class="panel-body">
+							<div class="col-lg-3">
+								<div class="input-group">
+									<p>Number of members: <?php echo $row_banddetails['band_members']; ?></p>
 								</div><!-- /input-group -->
 							</div><!-- /.col-lg-3 -->
 						</div><!-- panel-body -->
@@ -115,7 +130,7 @@
                 else
                 {
                     $previousPage = $page - 1;
-                    echo "<li><a href='./friends.php?page=$previousPage'>Prev</a></li>";
+                    echo "<li><a href='./fanof.php?page=$previousPage'>Prev</a></li>";
                 }
 
 
@@ -124,7 +139,7 @@
                     $theClass = '';
                     if($i == $page)
                         $theClass = 'active';
-                    echo "<li class='$theClass'><a href='./friends.php?page=$i'>$i</a></li>";
+                    echo "<li class='$theClass'><a href='./fanof.php?page=$i'>$i</a></li>";
                 }
 
                 if ($page == $numPages)
@@ -132,7 +147,7 @@
                 else
                 {
                     $nextPage = $page+1;
-                    echo "<li><a href='./friends.php?page=$nextPage'>Next</a></li>";
+                    echo "<li><a href='./fanof.php?page=$nextPage'>Next</a></li>";
                 }
 
                 ?>

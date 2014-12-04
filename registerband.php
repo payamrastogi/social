@@ -9,29 +9,26 @@
   //echo $_POST['txt_user_fname'];
   //echo $_POST['txt_user_lname'];
   //echo "1223";
-  if (isset($_POST['pas_user_password']) && 
-		isset($_POST['txt_user_email']) && 
-		isset($_POST['txt_user_name']) && 
-		isset($_POST['txt_user_fname']) && 
-		isset($_POST['txt_user_lname']) &&
+  if (isset($_POST['pas_band_user_password']) && 
+		isset($_POST['pas_band_user_conf_password']) && 
+		isset($_POST['txt_band_name']) && 
+		isset($_POST['txt_band_user_name']) && 
 		isset($_POST['submit']))
 	{
 		//echo "hello";
 		require 'dbHelper.php';
 		$dbo = new db();
-
-		$user_fname = $_POST['txt_user_fname'];
-		$user_lname = $_POST['txt_user_lname'];
-		$user_name = $_POST['txt_user_name'];
-		$user_password = $_POST['pas_user_password'];
-		$user_conf_password = $_POST['pas_user_conf_password'];
-		$user_email = $_POST['txt_user_email'];
-		
-		$user_fname = str_replace(' ', '', $user_fname);
-		$user_lname = str_replace(' ', '', $user_lname);
-		$user_name = str_replace(' ', '', $user_name);
-		$user_password = str_replace(' ', '', $user_password);
-		$user_email = str_replace(' ', '', $user_email);
+		$band_name = $_POST['txt_band_name'];
+		$band_user_name = $_POST['txt_band_user_name'];
+		$band_user_password = $_POST['pas_band_user_password'];
+		$band_user_conf_password = $_POST['pas_band_user_conf_password'];
+		$band_website ='';
+		if(isset($_POST['txt_band_website']))
+			$band_website = $_POST['txt_band_website'];
+			
+		$band_name = str_replace(' ', '', $band_name);
+		$band_user_name = str_replace(' ', '', $band_user_name);
+		$band_user_password = str_replace(' ', '', $band_user_password);
 		
 		//echo $_POST['pas_user_password'];
 		//echo $_POST['txt_user_email'];
@@ -39,26 +36,26 @@
 		//echo $_POST['txt_user_fname'];
 		//echo $_POST['txt_user_lname'];
 
-		if (strlen($user_password) < 2)
+		if (strlen($band_user_password) < 2)
 			$error = $error . " - Passwords must be 6 characters or more";
-		elseif($user_password == $user_conf_password)
+		elseif($band_user_password == $band_user_conf_password)
 		{
-			if($dbo->userExists($user_name) || $user_name == '' || $user_name == ' ')
+			if($dbo->bandExists($band_user_name) || $band_user_name == '' || $band_user_name == ' ')
 				$error = $error . ' - Username already in use';
 			else
 			{
-				$user_id = $dbo->createUser($user_fname, $user_lname,$user_name, $user_password, $user_email);
+				$band_id = $dbo->createBand($band_name, $band_user_name, $band_user_password, $band_website );
 				//echo "112";
 				//echo "hello".$user_id;
 				//if (! )
 				//	$error = $error . ' - an error occured';
-				if(isset($user_id))
+				if(isset($band_id))
 				{
-					$_SESSION['sess_user_type'] = 'user';
-					$_SESSION['sess_user_name'] = $user_name;
-					$_SESSION['sess_user_id'] = $user_id;
+					$_SESSION['sess_band_name'] = $band_name;
+					$_SESSION['sess_band_user_name'] = $band_user_password;
+					$_SESSION['sess_band_id'] = $band_id;
 					//echo $user_id;
-					header('Location: ./settings.php');
+					header('Location: ./genre.php');
 				}
 			}
 		}
@@ -66,14 +63,14 @@
 		{
 			$error = $error . " - Passwords must match";
 		}
-		if (strlen($user_name) < 3) 
+		if (strlen($band_user_password) < 3) 
 		{
 			$error = $error . " - Username must be 3 characters or more";
 		}
-		if (strlen($user_email) < 3 || ! filter_var( $user_email, FILTER_VALIDATE_EMAIL )) 
-		{
-			$error = $error . " - Email not real";
-		}
+		//if (strlen($band_website) < 3 || ! filter_var( $band_website, FILTER_VALIDATE_EMAIL )) 
+		//{
+		//	$error = $error . " - Email not real";
+		//}
 	}
 ?>
 
@@ -136,16 +133,16 @@
         <li class="">
           <a href="login.php">Login</a>
         </li>
-        <li class="active" ><a href="register.php">Register</a></li>
+        <li class="" ><a href="register.php">Register</a></li>
+		<li class="active" ><a href="register.php">Register Band</a></li>
       </ul>
       <form class="form-register" action="" method="post">
         <h2 class="form-register-heading">Register</h2>
-		<input type="text" class="input-block-level" placeholder="First Name" name="txt_user_fname">
-		<input type="text" class="input-block-level" placeholder="Last Name" name="txt_user_lname">
-		<input type="text" class="input-block-level" placeholder="Username" name="txt_user_name">
-        <input type="text" class="input-block-level" placeholder="Email" name="txt_user_email">
-        <input type="password" class="input-block-level" placeholder="Password" name="pas_user_password">
-        <input type="password" class="input-block-level" placeholder="Confirm Password" name="pas_user_conf_password">
+		<input type="text" class="input-block-level" placeholder="Band Name" name="txt_band_name">
+		<input type="text" class="input-block-level" placeholder="Band Website" name="txt_band_website">
+		<input type="text" class="input-block-level" placeholder="Username" name="txt_band_user_name">
+        <input type="password" class="input-block-level" placeholder="Password" name="pas_band_user_password">
+        <input type="password" class="input-block-level" placeholder="Confirm Password" name="pas_band_user_conf_password">
         <center>
 			<button class="btn btn-large btn-primary" type="submit" name="submit">Register</button>
         </center>

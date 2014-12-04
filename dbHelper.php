@@ -39,7 +39,15 @@
         }
         public function userExists($username)
         {
-            $queryString ="SELECT * FROM `users` WHERE username = '$username'";
+            $queryString ="SELECT * FROM `users` WHERE user_name = '$username'";
+            $query = $this->pdo->query($queryString);
+
+            return ($query->rowCount() > 0) ? true : false;
+        }
+		
+		public function bandExists($bandname)
+        {
+            $queryString ="SELECT * FROM `bands` WHERE band_name = '$bandname'";
             $query = $this->pdo->query($queryString);
 
             return ($query->rowCount() > 0) ? true : false;
@@ -64,13 +72,47 @@
             return $query;
         }
 		
+		 public function getBandDetails($band_id)
+        {
+            $queryString = "SELECT band_id, band_name, band_website, band_members FROM bands where band_id = '$band_id'";
+            $query = $this->pdo->query($queryString);
+            return $query;
+        }
+		
 		public function getUserId($user_name)
 		{
 			$queryString = "SELECT * FROM users WHERE users.user_name LIKE '$user_name'";
 			$query = $this->pdo->query($queryString);
 			return $query;
 		}
-
+		
+		public function getBandId($band_name)
+		{
+			$queryString = "SELECT band_id, band_name, band_members, band_website FROM bands WHERE bands.band_name LIKE '$band_name'";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getBandMembers($band_id)
+		{
+			$queryString = "Select u2.user_id,b.inband_position, b.band_joinedon, u2.user_fname, u2.user_lname, u2.user_dob, u1.user_name
+							from bandmembers b, userdetails u2, users u1
+							where u1.user_id = b.user_id
+							and u2.user_id = u1.user_id
+							and b.band_id = '$band_id';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getNumberOfFans($band_id)
+		{
+			$queryString = "select count(*) as total_fans 
+							from fanof
+							where band_id ='$band_id';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
         public function searchUsers($searchTerm, $start, $goFor)
         {
             /**
@@ -89,6 +131,39 @@
 
             if (str_replace(' ', '', $searchTerm) != '')
                 $queryString = $queryString . " WHERE users.user_name LIKE '%$searchTerm%'";
+
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+        }
+		
+		public function searchBands($searchBandName, $start, $goFor)
+        {
+            /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "SELECT band_id, band_name, band_members, band_website FROM bands";
+
+            if (str_replace(' ', '', $searchBandName) != '')
+                $queryString = $queryString . " WHERE bands.band_name LIKE '%$searchBandName%'";
 
             if ($goFor != -1 && $start == -1)
 				$queryString = $queryString .  " LIMIT 0, $goFor";
@@ -137,6 +212,39 @@
             return $query;
         }
 		
+		public function getFanOf($user_id, $start, $goFor)
+        {
+            /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "SELECT band_id FROM fanof";
+
+            if (str_replace(' ', '', $user_id) != '')
+                $queryString = $queryString . " WHERE user_id = '$user_id'";
+
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+        }
+		
 		public function unfollowUsers($unfollow_uid, $user_id)
 		{
 			$queryString = "delete FROM follows where following_uid=$user_id and followed_uid=$unfollow_uid";
@@ -144,9 +252,23 @@
 			return $query;
 		}
 		
+		public function unfanBand($band_id, $user_id)
+		{
+			$queryString = "delete FROM fanof where user_id=$user_id and band_id=$band_id";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
 		public function followUsers($follow_uid, $user_id)
 		{
 			$queryString = "Insert into follows(following_uid, followed_uid) values ($user_id, $follow_uid)";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function becomeFanOf($user_id, $band_id)
+		{
+			$queryString = "Insert into fanof (user_id, band_id) values ($user_id, $band_id)";
 			$query = $this->pdo->query($queryString);
 			return $query;
 		}
@@ -195,24 +317,106 @@
             $query = $this->pdo->query($queryString);
         }
 
-        public function createUser($username, $password, $email)
+        public function createUser($user_fname,$user_lname,$user_name, $user_password, $user_email)
         {
-            if (! $this->userExists($username))
+            if (! $this->userExists($user_name))
             {
-                $queryString = "INSERT INTO users (username, password, userType) VALUES
-                ('$username', '$password', 'user')";
-                $query = $this->pdo->query($queryString);
-
-                $queryString = "INSERT INTO userDetail (username, email) VALUES
-                ('$username', '$email')";
-                $query = $this->pdo->query($queryString);
-
-                return true;
+				
+                //$queryString = "INSERT INTO users (username, password, userType) VALUES
+                //('$username', '$password', 'user')";
+				//$queryString = "CALL insert_user_details($user_fname, $user_lname, $user_name, $user_password, $user_email)";
+                //$query = $this->pdo->query($queryString);
+                //return $query;
+				try 
+				{
+					// execute the stored procedure
+					$sql = 'CALL insert_user_details(:user_name,:user_password,:user_fname,:user_lname,:user_email,@user_id)';
+					$stmt = $this->pdo->prepare($sql);
+ 
+					$stmt->bindParam(':user_fname', $user_fname, PDO::PARAM_STR);
+					$stmt->bindParam(':user_lname', $user_lname, PDO::PARAM_STR);
+					$stmt->bindParam(':user_name', $user_name, PDO::PARAM_STR);
+					$stmt->bindParam(':user_password', $user_password, PDO::PARAM_STR);
+					$stmt->bindParam(':user_email', $user_email, PDO::PARAM_STR);
+					$stmt->execute();
+					$stmt->closeCursor();
+					// execute the second query to get customer's level
+					$r = $this->pdo->query("SELECT @user_id AS user_id")->fetch(PDO::FETCH_ASSOC);
+					if ($r) 
+					{
+						echo sprintf('Customer is %s', $r['user_id']);
+					}
+					return $r['user_id'];
+				} 
+				catch (PDOException $pe) 
+				{
+					die("Error occurred:" . $pe->getMessage());
+				}
             }
             else
                 return false;
         }
+		
+		
+		 public function createBand($band_name,$band_user_name,$band_user_password, $band_website)
+        {
+            if (! $this->bandExists($band_user_name))
+            {
+				try 
+				{
+					// execute the stored procedure
+					$sql = 'CALL insert_band_details(:band_name,:band_user_name,:band_user_password,:band_website,@band_id)';
+					$stmt = $this->pdo->prepare($sql);
+ 
+					$stmt->bindParam(':band_name', $band_name, PDO::PARAM_STR);
+					$stmt->bindParam(':band_user_name', $band_user_name, PDO::PARAM_STR);
+					$stmt->bindParam(':band_user_password', $band_user_password, PDO::PARAM_STR);
+					$stmt->bindParam(':band_website', $band_website, PDO::PARAM_STR);
+					$stmt->execute();
+					$stmt->closeCursor();
+					// execute the second query to get customer's level
+					$r = $this->pdo->query("SELECT @band_id AS band_id")->fetch(PDO::FETCH_ASSOC);
+					if ($r) 
+					{
+						echo sprintf('Customer is %s', $r['band_id']);
+					}
+					return $r['band_id'];
+				} 
+				catch (PDOException $pe) 
+				{
+					die("Error occurred:" . $pe->getMessage());
+				}
+            }
+            else
+                return false;
+        }
+		
+		public function getParentGenre()
+        {
+            $queryString = "select distinct level2 as p_genre_id, genre_name as p_genre_name from view_genre_category, genres where level2 = genre_id";
+            $query = $this->pdo->query($queryString);
+            return $query;
+        }
+		
+		public function getSubGenre($p_genre_id){
+			$queryString = "select distinct level3 as s_genre_id, genre_name as s_genre_name from view_genre_category, genres where level2 = '$p_genre_id' and level3 = genre_id;";
+            $query = $this->pdo->query($queryString);
 
+            return $query;
+		}
+		
+		public function deleteBandGenres($band_id)
+        {
+            $queryString = "delete FROM band_genres WHERE band_id = $band_id";
+            $query = $this->pdo->query($queryString);
+        }
+		
+		public function updateBandGenres($genre_id, $band_id)
+        {
+            $queryString = "insert into bandgenres (band_id, genre_id) values ($band_id, $genre_id);";
+            $query = $this->pdo->query($queryString);
+        }
+		
         public function newPhoto($username, $album, $url, $name)
         {
             $queryString = sprintf(

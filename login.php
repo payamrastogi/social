@@ -87,6 +87,7 @@
           <a href="login.php">Login</a>
         </li>
         <li><a href="register.php">Register</a></li>
+		<li><a href="registerband.php">Register Band</a></li>
       </ul>
       <form class="form-signin" action="" method="post">
         <h2 class="form-signin-heading">Sign In</h2>
