@@ -21,7 +21,7 @@
           }
           else
           {
-             header('Location: ./profile.php?user_name=' . $row['user_name']);
+             header('Location: ./home.php?user_name=' . $row['user_name']);
           }
        }
        else

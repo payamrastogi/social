@@ -104,11 +104,60 @@
 			return $query;
 		}
 		
+		public function getBandGenres($band_id)
+		{
+			$queryString = "Select g.genre_id, g.genre_name 
+							from genres g, bandgenres b
+							where g.genre_id = b.genre_id
+							and b.band_id = '$band_id'";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getPerformingConcerts($band_id)
+		{
+			$queryString = "select c.concert_id, c.concert_name, c.concert_sdate, c.concert_description
+							from concerts c, performing p
+							where p.band_id = '$band_id'
+							and c.concert_id = p.concert_id;";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getPerformingBands($concert_id)
+		{
+			$queryString = "select b.band_name, b.band_id
+							from bands b, performing p
+							where b.band_id = p.band_id
+							and p.concert_id = '$concert_id';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getConcertDetails($concert_id)
+		{
+			$queryString = "select concert_id, concert_name, concert_sdate, concert_stime, concert_edate,concert_etime, concert_lid, concert_capacity, 			concert_tcost, concert_description
+							from concerts
+							where concert_id = '$concert_id';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
 		public function getNumberOfFans($band_id)
 		{
 			$queryString = "select count(*) as total_fans 
 							from fanof
 							where band_id ='$band_id';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getTicketShopDetails($concert_id)
+		{
+			$queryString = "select t2.shop_id, t2.shop_name, t2.shop_street, t2.shop_city, t2.shop_country, t2.shop_oname, t2.shop_pnumber 
+							from tickets t1, ticketshops t2
+							where t1.concert_id = '$concert_id'
+							and t1.shop_id = t2.shop_id;";
 			$query = $this->pdo->query($queryString);
 			return $query;
 		}
@@ -333,6 +382,7 @@
 					$sql = 'CALL insert_user_details(:user_name,:user_password,:user_fname,:user_lname,:user_email,@user_id)';
 					$stmt = $this->pdo->prepare($sql);
  
+ 
 					$stmt->bindParam(':user_fname', $user_fname, PDO::PARAM_STR);
 					$stmt->bindParam(':user_lname', $user_lname, PDO::PARAM_STR);
 					$stmt->bindParam(':user_name', $user_name, PDO::PARAM_STR);
@@ -424,6 +474,47 @@
             $username, $album, $name, $url);
             $query = $this->pdo->query($queryString);
         }
+		
+		public function generateMapXML($location_id)
+		{
+			$queryString = "SELECT * FROM locations WHERE location_id='$location_id';";
+			$query = $this->pdo->query($queryString);
+			if (!$query) 
+			{
+				die('Invalid query: ' . mysql_error());
+			}
+
+			header("Content-type: text/xml");
+			
+			// Start XML file, echo parent node
+			echo '<markers>';
+
+			// Iterate through the rows, adding XML nodes for each
+			while ($row= $query->fetch(PDO::FETCH_ASSOC))
+			{
+				// ADD TO XML DOCUMENT NODE
+				echo '<marker ';
+				echo 'name="' . $this->parseToXML($row['location_name']) . '" ';
+				echo 'address="' . $this->parseToXML($row['location_street']) . '" ';
+				echo 'lat="' . $row['location_latitude'] . '" ';
+				echo 'lng="' . $row['location_longitude'] . '" ';
+				echo 'type="' . $row['location_type'] . '" ';
+				echo '/>';
+			}
+
+			// End XML file
+			echo '</markers>';
+		}
+		
+		public function parseToXML($htmlStr)
+		{	
+			$xmlStr=str_replace('<','&lt;',$htmlStr);
+			$xmlStr=str_replace('>','&gt;',$xmlStr);
+			$xmlStr=str_replace('"','&quot;',$xmlStr);
+			$xmlStr=str_replace("'",'&#39;',$xmlStr);
+			$xmlStr=str_replace("&",'&amp;',$xmlStr);
+			return $xmlStr;
+		}
     }
 ?>
 

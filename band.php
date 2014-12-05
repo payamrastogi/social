@@ -93,7 +93,15 @@
 							<p>Followers: <?php $query2 = $dbo->getNumberOfFans($band_id);
 											$row_fans = $query2->fetch(PDO::FETCH_ASSOC);
 											echo $row_fans['total_fans'];	?></p>
-						<!--<p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+							<p>Band Genres: <?php $query3 = $dbo->getBandGenres($band_id);
+											while($row_bandgenres = $query3->fetch(PDO::FETCH_ASSOC))
+											{ ?>
+											<ul>
+												<li>
+													<?php echo $row_bandgenres['genre_name']; ?>
+												</li>
+											</ul>
+										<?php } ?></p>
 					</div>
 				</div>
 			</div>
@@ -111,8 +119,30 @@
 				<div class="thumbnail">
 					<!--<img data-src="holder.js/300x300" alt="...">-->
 					<div class="caption">
-						<h3>Give It a Go</h3>
-						<p>Or don't. Up to you.</p>
+						<h3>Upcoming Events</h3>
+						<?php
+							$query4 = $dbo->getPerformingConcerts($band_id);
+							while ($row_performing = $query4->fetch(PDO::FETCH_ASSOC))
+							{	
+								?>
+							   <div class="row-fluid" style="margin-top: 20px;">
+									<div class="panel panel-default">
+										<div class="panel-heading">
+											<h3 class="panel-title">
+												<a href="./concert.php?concert_id=<?php echo $row_performing['concert_id']?>&redirected=true">
+													<span class="glyphicon glyphicon-headphones" aria-hidden="true"></span>
+													<?php echo $row_performing['concert_name']; ?>	
+												</a>
+											</h3>
+											
+										</div>
+										<div class="panel-body">
+											<p>Start Date: <?php echo $row_performing['concert_sdate']; ?></p>
+											<p>Description: <?php echo $row_performing['concert_description']; ?></p>
+										</div><!-- panel-body -->
+									</div><!-- Panel Profile Details -->
+								</div>
+							<?php } ?>
 						</br>
 					</div>
 				</div>
