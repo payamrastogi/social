@@ -88,6 +88,27 @@
             return $query;
         }
 		
+		public function getLocations()
+        {
+            $queryString = "SELECT * FROM locations;";
+            $query = $this->pdo->query($queryString);
+            return $query;
+        }
+		
+		public function getBands()
+        {
+            $queryString = "SELECT * FROM bands;";
+            $query = $this->pdo->query($queryString);
+            return $query;
+        } 
+		
+		public function getShops()
+        {
+            $queryString = "SELECT * FROM ticketshops;";
+            $query = $this->pdo->query($queryString);
+            return $query;
+        } 
+		
 		 public function getBandDetails($band_id)
         {
             $queryString = "SELECT band_id, band_name, band_website, band_members FROM bands where band_id = '$band_id'";
@@ -610,6 +631,39 @@
                 return false;
         }
 		
+		 public function insertConcertByBand($concert_name,$concert_sdate,$concert_stime, $concert_edate, $concert_etime, $concert_lid, $concert_tcost, $concert_capacity, $concert_description)
+        {
+				
+				try 
+				{
+					// execute the stored procedure
+					$sql = 'CALL insert_concerts_by_band(:concert_name, :concert_sdate, :concert_stime, :concert_edate, :concert_etime, :concert_lid, :concert_tcost, :concert_capacity, :concert_description, @concert_id)';
+					$stmt = $this->pdo->prepare($sql);
+					$stmt->bindParam(':concert_name', $concert_name, PDO::PARAM_STR);
+					$stmt->bindParam(':concert_sdate', $concert_sdate, PDO::PARAM_STR);
+					$stmt->bindParam(':concert_stime', $concert_stime, PDO::PARAM_STR);
+					$stmt->bindParam(':concert_edate', $concert_edate, PDO::PARAM_STR);
+					$stmt->bindParam(':concert_etime', $concert_etime, PDO::PARAM_STR);
+					$stmt->bindParam(':concert_lid', $concert_lid, PDO::PARAM_STR);
+					$stmt->bindParam(':concert_tcost', $concert_tcost, PDO::PARAM_STR);
+					$stmt->bindParam(':concert_capacity', $concert_capacity, PDO::PARAM_STR);
+					$stmt->bindParam(':concert_description', $concert_description, PDO::PARAM_STR);
+					$stmt->execute();
+					$stmt->closeCursor();
+					// execute the second query to get customer's level
+					$r = $this->pdo->query("SELECT @concert_id AS concert_id")->fetch(PDO::FETCH_ASSOC);
+					if ($r) 
+					{
+						//echo sprintf('Customer is %s', $r['user_id']);
+					}
+					return $r['concert_id'];
+				} 
+				catch (PDOException $pe) 
+				{
+					die("Error occurred:" . $pe->getMessage());
+				}
+        }
+		
 		
 		 public function createBand($band_name,$band_user_name,$band_user_password, $band_website, $band_members)
         {
@@ -671,6 +725,21 @@
             $query = $this->pdo->query($queryString);
         }
 		
+		public function insertBandConcert($concert_id, $band_id)
+        {
+            $queryString = "insert into performing (band_id, concert_id) values ($band_id, $concert_id);";
+            $query = $this->pdo->query($queryString);
+        }
+		public function insertGenreConcert($concert_id, $genre_id)
+        {
+            $queryString = "insert into concertgenres(genre_id, concert_id) values ($genre_id, $concert_id);";
+            $query = $this->pdo->query($queryString);
+        }
+		public function insertShopConcert($concert_id, $shop_id)
+        {
+            $queryString = "insert into tickets(shop_id, concert_id) values ($shop_id, $concert_id);";
+            $query = $this->pdo->query($queryString);
+        }
         public function newPhoto($username, $album, $url, $name)
         {
             $queryString = sprintf(

@@ -4,6 +4,7 @@
     $dbo = new db();
 	$user_id = '';
 	$successMessage = '';
+    $errorMessage = '';
 	
 	if (!isset($_SESSION['sess_band_user_name']))
     {
@@ -25,20 +26,154 @@
         $band_user_name = $_SESSION['sess_band_user_name'];
 		$band_id = $_SESSION['sess_band_id'];
     }
-    $queryAll = $dbo->getAllBandMembers($band_id, -1, -1); //Used for counting rows
-	
-    $numResults = $queryAll->rowCount();
-    $resultsPerPage = 2;
-    $numPages = ceil($numResults / $resultsPerPage);
-
-    if (isset($_GET['page']) && (int)$_GET['page'] <= $numPages && $_GET['page'] != '')
-        $page = (int)$_GET['page'];
-    else
-        $page = 1;
-
-    $startFrom = ($page - 1) * $resultsPerPage;
-
-    $query = $dbo->getAllBandMembers($band_id, $startFrom, $resultsPerPage);
+	if(isset($_POST['btn_add_concert']))
+	{
+		if (isset($_POST['txt_concert_name']) && $_POST['txt_concert_name'] != '')
+		{
+			$concert_name = $_POST['txt_concert_name'];
+		}
+		else
+		{
+			 $errorMessage = $errorMessage ." - Provide Concert name. ";
+		}
+		if (isset($_POST['example1']) && $_POST['example1'] != '')
+		{
+			$concert_sdate= $_POST['example1'];
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - Provide Concert Start date. ";
+		}
+		if (isset($_POST['timepicker1']) && $_POST['timepicker1'] != '')
+		{
+			$concert_stime= $_POST['timepicker1'];
+			//echo $concert_stime;
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - Provide Concert Start time. ";
+		}
+		if (isset($_POST['example2']) && $_POST['example2'] != '')
+		{
+			$concert_edate= $_POST['example2'];
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - Provide Concert End date. ";
+		}
+		if (isset($_POST['timepicker2']) && $_POST['timepicker2'] != '')
+		{
+			$concert_etime= $_POST['timepicker2'];
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - Provide Concert End time. ";
+		}
+		if (isset($_POST['sel_location']) && $_POST['sel_location'] != '')
+		{
+			$concert_lid= $_POST['sel_location'];
+			//echo $concert_lid;
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - Select location. ";
+		}
+		if (isset($_POST['txt_concert_tcost']) && $_POST['txt_concert_tcost'] != '')
+		{
+			$concert_tcost= $_POST['txt_concert_tcost'];
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - Provide Ticket cost. ";
+		}
+		if (isset($_POST['txt_concert_capacity']) && $_POST['txt_concert_capacity'] != '')
+		{
+			$concert_capacity= $_POST['txt_concert_tcost'];
+		}
+		else
+		{
+			$concert_capacity = '';
+		}
+		if (isset($_POST['txt_concert_desription']) && $_POST['txt_concert_desription'] != '')
+		{
+			$concert_description= $_POST['txt_concert_desription'];
+		}
+		else
+		{
+			$concert_description = '';
+		}
+		if (isset($_POST['sel_bands']) && $_POST['sel_bands'] != '')
+		{
+			//echo "khk";
+			//echo $_POST['sel_bands'];
+			$band_id_arr = $_POST['sel_bands'];
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - error occured. ";
+		}
+		if (isset($_POST['sel_genres']) && $_POST['sel_genres'] != '')
+		{
+			$genre_id_arr = $_POST['sel_genres'];
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - error occured. ";
+		}
+		if (isset($_POST['sel_tshops']) && $_POST['sel_tshops'] != '')
+		{
+			$shop_id_arr = $_POST['sel_tshops'];
+		}
+		else
+		{
+			$errorMessage = $errorMessage ." - error occured. ";
+		}
+		if($errorMessage=='')
+		{
+			$concert_id = $dbo->insertConcertByBand($concert_name,$concert_sdate,$concert_stime, $concert_edate, $concert_etime, $concert_lid, $concert_tcost, $concert_capacity, $concert_description);
+			//echo $concert_id;
+		}
+		if(isset($concert_id) && $concert_id!='')
+		{
+			if(is_array($band_id_arr))
+			{
+				foreach($band_id_arr as $band_id)
+				{
+					//echo "hh";
+					$dbo->insertBandConcert($concert_id, $band_id);
+				}
+			}
+			else
+			{
+				$errorMessage = $errorMessage ." - error occured. ";
+			}
+			if(is_array($genre_id_arr))
+			{
+				foreach($genre_id_arr as $genre_id)
+				{
+					//echo "hh";
+					$dbo->insertGenreConcert($concert_id, $genre_id);
+				}
+			}
+			else
+			{
+				$errorMessage = $errorMessage ." - error occured. ";
+			}
+			if(is_array($shop_id_arr))
+			{
+				foreach($shop_id_arr as $shop_id)
+				{
+					//echo "hh";
+					$dbo->insertShopConcert($concert_id, $shop_id);
+				}
+			}
+			else
+			{
+				$errorMessage = $errorMessage ." - error occured. ";
+			}
+			
+		}
+	}
  ?>
 
 <!DOCTYPE html>
@@ -77,144 +212,136 @@
 					<button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
 					<strong>Success! </strong> $successMessage
 					</div>";
+				if (isset($errorMessage) && $errorMessage != '')
+					echo "<div class=\"alert alert-error\" id=\"formError\">
+                   <button type=\"button\" class=\"close\" data-dismiss=\"alert\">&times;</button>
+                   <strong>ERROR! </strong> $errorMessage
+                 </div>";
 			?>
-           <?php
-				$row = $query->fetch(PDO::FETCH_ASSOC);
-				$user_id = $row['user_id'];
-				$query1 = $dbo->getUserDetails($user_id);
-				$row_userdetails = $query1->fetch(PDO::FETCH_ASSOC);
-				?>
 				
-                    <div class="row-fluid" style="margin-top: 20px;">
-                       <div class="row-fluid" style="margin-top: 20px;">
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									Heading
-								</div>
-								<div class="panel-body">
-									<form role="form" class="form-horizontal" method="post" action="">
-										<div class="col-sm-6 col-md-4">
-											<div class="thumbnail">
-												<div class="input-group">
-													<label for="txt_concert_name">Concert Name</label>
-													<input type="text" class="form-control" name="txt_concert_name" placeholder="Concert Name"/>
-												</div>
-												<div class="input-group">
-													<label for="txt_sdate">Concert description</label>
-													<textarea class="form-control" name="txt_concert_desription	" placeholder="Concert description..."  id=""></textarea>
-												</div>
-												<div class="input-group">
-													<label for="txt_sdate">Start date</label>
-													<input type="text" class="form-control" placeholder="Start date" name="example1" id="example1"/>
-												</div>
-												<div class="input-group">
-													<div class="col-md-12">
-														<label for="txt_sdate">Start time</label>
-														<div class="input-group bootstrap-timepicker">
-														<input id="timepicker1" type="text" class="form-control">
-															<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-														</div>
-													</div>
-												</div>
-												<div class="input-group">
-													<label for="txt_sdate">End date</label>
-													<input type="text" class="form-control" placeholder="End date" name="example2" id="example2"/>
-												</div>
-												<div class="input-group">
-													<div class="col-md-12">
-														<label for="txt_sdate">End time</label>
-														<div class="input-group bootstrap-timepicker">
-														<input id="timepicker2" type="text" class="form-control">
-															<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-4">
-											<div class="thumbnail">
-												<div class="input-group">
-													<label for="txt_location">Location</label>
-													<select class="form-control">
-													  <option>1</option>
-													  <option>2</option>
-													  <option>3</option>
-													  <option>4</option>
-													  <option>5</option>
-													</select>
-												</div>
-												<div class="input-group">
-													<label for="txt_bandperforming">Band Performing</label>
-													<select multiple class="form-control">
-													  <option>1</option>
-													  <option>2</option>
-													  <option>3</option>
-													  <option>4</option>
-													  <option>5</option>
-													</select>
-												</div>
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-4">
-											<div class="thumbnail">
-												<div class="input-group">
-													<label for="txt_concert_tcost">Ticket Cost</label>
-													<input type="text" class="form-control" name="txt_concert_tcost" placeholder="Ticket Cost"/>
-												</div>
-												<div class="input-group">
-													<label for="txt_concert_tshop">Tickets Available @</label>
-													<select multiple class="form-control">
-													  <option>1</option>
-													  <option>2</option>
-													  <option>3</option>
-													  <option>4</option>
-													  <option>5</option>
-													</select>
-												</div>
-											</div>
-										</div>
-										<div class="col-sm-6 col-md-4">
-											<div class="thumbnail">
-												<button type="submit" class="btn btn-primary btn-large" name="btn_add_concert">Save</button>
-											</div>
-										</div>
-									</form>
-								</div><!-- panel-body -->
-							</div><!-- Panel Profile Details -->
+			<div class="row-fluid" style="margin-top: 20px;">
+			   <div class="row-fluid" style="margin-top: 20px;">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							Heading
 						</div>
-                    </div>
-            <nav>
-              <ul class="pagination">
-
-                <?php
-
-                if ($page == 1)
-                    echo "<li class='disabled'><a href='#'>Prev</a></li>";
-                else
-                {
-                    $previousPage = $page - 1;
-                    echo "<li><a href='./addMember.php?page=$previousPage'>Prev</a></li>";
-                }
-
-                for ($i=1; $i < $numPages+1; $i++)
-                {
-                    $theClass = '';
-                    if($i == $page)
-                        $theClass = 'active';
-                    echo "<li class='$theClass'><a href='./addMember.php?page=$i'>$i</a></li>";
-                }
-
-                if ($page == $numPages)
-                    echo "<li class='disabled'><a href='#'>Next</a></li>";
-                else
-                {
-                    $nextPage = $page+1;
-                    echo "<li><a href='./addMember.php?page=$nextPage'>Next</a></li>";
-                }
-
-                ?>
-              </ul>
-            </nav>
+						<div class="panel-body">
+							<form role="form" class="form-horizontal" method="post" action="">
+								<div class="col-sm-6 col-md-4">
+									<div class="thumbnail">
+										<div class="input-group">
+											<label for="txt_concert_name">Concert Name</label>
+											<input type="text" class="form-control" name="txt_concert_name" placeholder="Concert Name"/>
+										</div>
+										<div class="input-group">
+											<label for="txt_sdate">Concert description</label>
+											<textarea class="form-control" name="txt_concert_desription	" placeholder="Concert description..."  id=""></textarea>
+										</div>
+										<div class="input-group">
+											<label for="txt_sdate">Start date</label>
+											<input type="text" class="form-control" placeholder="Start date" name="example1" id="example1"/>
+										</div>
+										<div class="input-group">
+											<div class="col-md-12">
+												<label for="txt_sdate">Start time</label>
+												<div class="input-group bootstrap-timepicker">
+												<input id="timepicker1" name="timepicker1" type="text" class="form-control">
+													<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+												</div>
+											</div>
+										</div>
+										<div class="input-group">
+											<label for="txt_sdate">End date</label>
+											<input type="text" class="form-control" placeholder="End date" name="example2" id="example2"/>
+										</div>
+										<div class="input-group">
+											<div class="col-md-12">
+												<label for="txt_sdate">End time</label>
+												<div class="input-group bootstrap-timepicker">
+												<input id="timepicker2" name="timepicker2" type="text" class="form-control">
+													<span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6 col-md-4">
+									<div class="thumbnail">
+										<div class="input-group">
+											<label for="txt_location">Location</label>
+											<select name="sel_location" class="form-control">
+											<?php
+												$query2 = $dbo->getLocations();
+												while($row_locations = $query2->fetch(PDO::FETCH_ASSOC))
+												{?> 
+											  <option value="<?php echo $row_locations['location_id'];?>"><?php echo $row_locations['location_name'].", ".$row_locations['location_type'];?></option>
+											<?php } ?>
+											</select>
+										</div>
+										<div class="input-group">
+											<label for="sel_bands">Band Performing</label>
+											<select name="sel_bands[]" multiple class="form-control">
+											 <?php
+												$query5 = $dbo->getBands();
+												while($row_bands = $query5->fetch(PDO::FETCH_ASSOC))
+												{?> 
+											  <option value="<?php echo $row_bands['band_id'];?>"><?php echo $row_bands['band_name'];?></option>
+											<?php } ?>
+											</select>
+										</div>
+										<div class="input-group">
+											<label for="sel_genres">Genre</label>
+											<select name="sel_genres[]" multiple class="form-control">
+											 <?php
+												$query4 = $dbo->getParentGenre();
+												while($row_genres = $query4->fetch(PDO::FETCH_ASSOC))
+												{?> 
+											  <option value="<?php echo $row_genres['p_genre_id'];?>"><?php echo $row_genres['p_genre_name'];?></option>
+											<?php
+													$query5 = $dbo->getSubGenre($row_genres['p_genre_id']);
+													while($row_genres = $query5->fetch(PDO::FETCH_ASSOC))
+													{?>
+													<option value="<?php echo $row_genres['s_genre_id'];?>"><?php echo $row_genres['s_genre_name'];?></option>
+													<?php }
+												}
+											?>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6 col-md-4">
+									<div class="thumbnail">
+										<div class="input-group">
+											<label for="txt_concert_tcost">Ticket Cost</label>
+											<input type="text" class="form-control" name="txt_concert_tcost" placeholder="Ticket Cost"/>
+										</div>
+										<div class="input-group">
+											<label for="txt_concert_tcost">Capacity</label>
+											<input type="text" class="form-control" name="txt_concert_capacity" placeholder="Capacity"/>
+										</div>
+										<div class="input-group">
+											<label for="sel_tshops">Tickets Available @</label>
+											<select name="sel_tshops[]" multiple class="form-control">
+											 <?php
+												$query3 = $dbo->getShops();
+												while($row_shops = $query3->fetch(PDO::FETCH_ASSOC))
+												{?> 
+											  <option value="<?php echo $row_shops['shop_id'];?>"><?php echo $row_shops['shop_name'].", ".$row_shops['shop_street'];?></option>
+											<?php } ?>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6 col-md-4">
+									<div class="thumbnail">
+										<button type="submit" class="btn btn-primary btn-large" name="btn_add_concert">Save</button>
+									</div>
+								</div>
+							</form>
+						</div><!-- panel-body -->
+					</div><!-- Panel Profile Details -->
+				</div>
+			</div>
         </div> <!-- /container -->
         <?php include 'footer.php'; ?>
 		<script src="./js/jquery-1.9.1.min.js"></script>
@@ -225,14 +352,18 @@
             $(document).ready(function () {
                 
                 $('#example1').datepicker({
-                    format: "dd/mm/yyyy"
+                    format: "yyyy-mm-dd"
                 });  
 				$('#example2').datepicker({
-                    format: "dd/mm/yyyy"
+                    format: "yyyy-mm-dd"
                 });
 				
-				$('#timepicker1').timepicker();
-				$('#timepicker2	').timepicker();
+				$('#timepicker1').timepicker({
+				showMeridian:false
+				});
+				$('#timepicker2	').timepicker({
+				showMeridian:false
+				});
 
             });
         </script>
