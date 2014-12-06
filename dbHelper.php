@@ -285,6 +285,44 @@
 			return $query;
 		}
 		
+		public function getConcertId($concert_name)
+		{
+			$queryString = "select concert_id
+							from concerts
+							where concert_name like '%$concert_name%';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		public function getUpcomingConcert($start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select * from concerts where concert_sdate > date(now())";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
+		
 		public function getNumberOfFans($band_id)
 		{
 			$queryString = "select count(*) as total_fans 
@@ -517,7 +555,71 @@
 			//echo $query;
             return $query;
         }
+		public function getUserConcerts($user_id, $start, $goFor)
+        {
+            /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "SELECT * FROM plans";
+
+            if (str_replace(' ', '', $user_id) != '')
+                $queryString = $queryString . " WHERE user_id = '$user_id'";
+
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+        }
 		
+		public function getGenreConcerts($genre_id, $start, $goFor)
+        {
+            /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "SELECT * FROM concertgenres";
+
+            if (str_replace(' ', '', $genre_id) != '')
+                $queryString = $queryString . " WHERE genre_id = '$genre_id'";
+
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+        }
 		public function unfollowUsers($unfollow_uid, $user_id)
 		{
 			$queryString = "delete FROM follows where following_uid=$user_id and followed_uid=$unfollow_uid";
@@ -710,6 +812,13 @@
 			$queryString = "select distinct level3 as s_genre_id, genre_name as s_genre_name from view_genre_category, genres where level2 = '$p_genre_id' and level3 = genre_id;";
             $query = $this->pdo->query($queryString);
 
+            return $query;
+		}
+		
+		public function getGenreId($genre_name)
+		{
+			$queryString = "select genre_id from genres where genre_name = '$genre_name'";
+			$query = $this->pdo->query($queryString);
             return $query;
 		}
 		

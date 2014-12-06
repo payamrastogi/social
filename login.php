@@ -118,10 +118,8 @@
         <h2 class="form-signin-heading">Sign In</h2>
         <input type="text" class="input-block-level" placeholder="Username" name="txt_user_name">
         <input type="password" class="input-block-level" placeholder="Password" name="pass_user_password">
-		<br/>
-		<input type="radio" class="input-block-level"  id="rd_user" name="rd_user_type" value="user">&nbsp;User&nbsp;
-		<input type="radio" class="input-block-level"  id="rd_band" name="rd_user_type" value="band">&nbsp;Band&nbsp;
-		<br/>
+		<input type="radio" class="input-block-level"  id="rd_user" name="rd_user_type" value="user">User
+		<input type="radio" class="input-block-level"  id="rd_band" name="rd_user_type" value="band">Band
         <center>
         <button class="btn btn-large btn-primary" type="submit" name="btn_submit">Sign in</button>
         </center>

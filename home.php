@@ -66,6 +66,7 @@
 			<li class=""><a href="friends.php">Following</a></li>
 			<li class=""><a href="fanof.php">Fan of</a></li>
 			<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
+			<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
 		</ul>
         <?php echo "<h3 style=\"font-size: 40px;\">$fullName</h3>"; ?>
 		<div class="row">

@@ -79,9 +79,10 @@
         <li class="active">
           <a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
         </li>
+		<li class=""><a href="friends.php">Following</a></li>
+		<li class=""><a href="fanof.php">Fan of</a></li>
         <li><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
-        <li><a href="friends.php">Following</a></li>
-		<li><a href="fanof.php">Fan of</a></li>
+		<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
       </ul>
         <?php echo "<h1 style=\"font-size: 60px;\">$fullName</h1>"; ?>
         <div class="row-fluid" style="margin-top: 20px;">
