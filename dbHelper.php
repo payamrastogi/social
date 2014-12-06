@@ -33,6 +33,22 @@
             else
                 return false;
         }
+		
+		public function verifyBandLogin($user_name, $user_password)
+        {
+            /**
+            *   Returns false if can't log in else returns the user data
+            */
+            $queryString = "SELECT * FROM bands WHERE band_user_name='$user_name'";
+            $query = $this->pdo->query($queryString);
+            $row = $query->fetch(PDO::FETCH_ASSOC);
+
+            if ($row && $row['band_user_password'] == $user_password)
+                return $row;
+            else
+                return false;
+        }
+		
         public function close()
         {
             $link =null;
@@ -104,12 +120,117 @@
 			return $query;
 		}
 		
+		public function getAllBandMembers($band_id, $start, $goFor)
+        {
+            /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "SELECT user_id, band_id FROM bandmembers";
+
+            if (str_replace(' ', '', $band_id) != '')
+                $queryString = $queryString . " WHERE band_id = '$band_id'";
+
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+        }
+		
+		public function searchMembers($searchBandMember, $start, $goFor)
+        {
+            /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "SELECT u1.user_id, u1.user_name, u2.user_fname, u2.user_lname FROM users u1, userdetails u2";
+
+            if (str_replace(' ', '', $searchBandMember) != '')
+                $queryString = $queryString . " WHERE u1.user_id = u2.user_id
+												and  u1.user_name LIKE '%$searchBandMember%' 
+												union
+												SELECT u1.user_id, u1.user_name, u2.user_fname, u2.user_lname FROM users u1, userdetails u2
+												WHERE u1.user_id = u2.user_id
+												and  u2.user_fname LIKE '%$searchBandMember%'
+												union 
+												SELECT u1.user_id, u1.user_name, u2.user_fname, u2.user_lname FROM users u1, userdetails u2
+												WHERE u1.user_id = u2.user_id
+												and u2.user_lname LIKE '%$searchBandMember%';";
+
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+        }
+		
+		public function addBandMember($band_id, $user_id, $inband_position)
+		{
+			$queryString = "Select * from bandmembers where band_id = '$band_id' and user_id = '$user_id';";
+			$query = $this->pdo->query($queryString);
+			if($query->rowCount() > 0)
+			{
+				return false;
+			}
+			else
+			{
+				echo "hello1234";
+				echo $band_id;
+				echo $user_id;
+				echo $inband_position;
+				$queryInsert = "Insert into bandmembers (band_id, user_id, inband_position) values ($band_id, $user_id, '$inband_position');";
+				$queryResult= $this->pdo->query($queryInsert);
+				return true;
+			}
+		}
+		
 		public function getBandGenres($band_id)
 		{
 			$queryString = "Select g.genre_id, g.genre_name 
 							from genres g, bandgenres b
 							where g.genre_id = b.genre_id
 							and b.band_id = '$band_id'";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getUserGenres($user_id)
+		{
+			$queryString = "Select g.genre_id, g.genre_name 
+							from genres g, usergenres u
+							where g.genre_id = u.genre_id
+							and u.user_id = '$user_id'";
 			$query = $this->pdo->query($queryString);
 			return $query;
 		}
@@ -160,6 +281,88 @@
 							and t1.shop_id = t2.shop_id;";
 			$query = $this->pdo->query($queryString);
 			return $query;
+		}
+		
+		public function getThisMonthConcerts($user_id)
+		{
+			$queryString = "select c.concert_sdate,c.concert_name, c.concert_id  
+							from plans p , concerts c
+							where p.user_id = '$user_id'
+							and p.concert_id = c.concert_id
+							and month(concert_sdate) = month(now())
+							and plan <> 'No';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getAverageRating($concert_id)
+		{
+			$queryString = "select avg(rating) as avg_rating, concert_id 
+							from plans
+							where concert_id = '$concert_id'
+							and rated='yes';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function updatingRating($concert_id, $user_id, $rating)
+		{
+			$queryString = "Update plans set rating = '$rating'
+							where concert_id='$concert_id'
+								and user_id = '$user_id';";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function getReviews($concert_id)
+		{
+			$queryString = "select u1.user_id, p.user_review, u1.user_fname, u1.user_lname, u2.user_name, p.review_atime
+							from plans p, userdetails u1, users u2
+							where p.concert_id = '$concert_id'
+							and p.user_id = u1.user_id	
+							and u1.user_id = u2.user_id
+							and p.reviewed = 'yes';
+							order by p.review_atime desc";
+			$query = $this->pdo->query($queryString);
+			return $query;
+		}
+		
+		public function updateReview($user_id, $concert_id, $review)
+		{
+			$queryString ="SELECT * FROM plans WHERE user_id = '$user_id' and  concert_id='$concert_id'";
+            $query = $this->pdo->query($queryString);
+
+            if($query->rowCount() > 0)
+			{
+				$queryString = "Update plans 
+								set user_review = '$review',
+								reviewed = 'yes'
+								where user_id='$user_id'
+								and concert_id ='$concert_id';";
+			}
+			else
+			{
+				$queryString = "Insert into plans (user_id, concert_id, user_review, reviewed) values ('$user_id', '$concert_id', '$review', 'yes');";
+			}
+			$query = $this->pdo->query($queryString);
+		}
+		
+		public function addIntoCalendar($user_id, $concert_id)
+		{
+			if (!$this->checkCalendarEntry($user_id, $concert_id))
+			{
+				$queryString = "Insert into calendar (user_id, concert_id) values ('$user_id', '$concert_id');";
+				$query = $this->pdo->query($queryString);
+			}
+			else return false;
+		}
+		
+		public function checkCalendarEntry($user_id, $concert_id)
+		{
+			$queryString ="SELECT * FROM calendar WHERE user_id = '$user_id' and concert_id = '$concert_id'";
+            $query = $this->pdo->query($queryString);
+
+            return ($query->rowCount() > 0) ? true : false;
 		}
 		
         public function searchUsers($searchTerm, $start, $goFor)
@@ -408,20 +611,21 @@
         }
 		
 		
-		 public function createBand($band_name,$band_user_name,$band_user_password, $band_website)
+		 public function createBand($band_name,$band_user_name,$band_user_password, $band_website, $band_members)
         {
             if (! $this->bandExists($band_user_name))
             {
 				try 
 				{
 					// execute the stored procedure
-					$sql = 'CALL insert_band_details(:band_name,:band_user_name,:band_user_password,:band_website,@band_id)';
+					$sql = 'CALL insert_band_details(:band_name,:band_user_name,:band_user_password,:band_website,:band_members,@band_id)';
 					$stmt = $this->pdo->prepare($sql);
  
 					$stmt->bindParam(':band_name', $band_name, PDO::PARAM_STR);
 					$stmt->bindParam(':band_user_name', $band_user_name, PDO::PARAM_STR);
 					$stmt->bindParam(':band_user_password', $band_user_password, PDO::PARAM_STR);
 					$stmt->bindParam(':band_website', $band_website, PDO::PARAM_STR);
+					$stmt->bindParam(':band_members', $band_members, PDO::PARAM_STR);
 					$stmt->execute();
 					$stmt->closeCursor();
 					// execute the second query to get customer's level

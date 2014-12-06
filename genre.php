@@ -17,7 +17,7 @@
 
  ?>
 <?php
-echo $_SESSION['sess_band_id'];
+//echo $_SESSION['sess_band_id'];
 $successMessage = '';
 $errorMessage = '';
  if(isset($_POST['submit']))
@@ -39,15 +39,8 @@ $errorMessage = '';
 	}
 	if(isset($_POST['submit']) && $_POST['submit'] == 'next')
 	{
-		if($_SESSION['userType'] == 'USER')
-		{
-			header('Location: ./bandMayLike.php');
-		}
-		else
-		{
-			//$query = $dbo->activateUser($userId);
-			header('Location: ./home.php');
-		}
+		//echo "hello";
+		header('Location: ./bandHome.php?band_user_name='.$band_user_name);
 	}
  }
 

@@ -2,6 +2,7 @@
 //TODO: make this visible to only logged in users
     session_start();
     require 'dbHelper.php';
+	require_once("./source/activecalendar.php");
     $dbo = new db();
 	$redirected = '';
 
@@ -47,16 +48,17 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="./data/css/calendar.css">
         <title><?php echo "$user_name"; ?></title>
     </head>
     <body>
 
     <?php include 'header.php'; ?>
 
-    <div class="container" style="position: relative; top: 10px;">
+    <div class="container" style="position: relative; top: 40px;">
 		<ul class="nav nav-tabs">
 			<li class="active">
-				<a href="#">Home</a>
+				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
 			</li>
 			<li>
 				<a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
@@ -71,7 +73,37 @@
 				<div class="thumbnail">
 					<!--<img data-src="holder.js/300x300" alt="...">-->
 					<div class="caption">
-						
+						<p>Genres you like
+						<?php 
+								$query1 = $dbo->getUserGenres($user_id);
+								while($row_usergenres = $query1->fetch(PDO::FETCH_ASSOC))
+								{ ?>
+									<ul>
+										<li>
+											<?php echo $row_usergenres['genre_name']; ?>
+										</li>
+									</ul>
+							<?php   } ?>
+						</p>
+						<p> You are fan of
+						<ul>
+						<?php 
+							$query1 = $dbo->getFanOf($user_id,-1, -1);
+							for($i=0;$i<2;$i++)
+							{
+								$row_band_id = $query1->fetch(PDO::FETCH_ASSOC);
+								$query2 = $dbo->getBandDetails($row_band_id['band_id']);
+								$row_banddetails = $query2->fetch(PDO::FETCH_ASSOC);
+								?>
+
+										<li>
+											<a href="./band.php?band_name=<?php echo $row_banddetails['band_name']?>&redirected=true">
+												<?php echo $row_banddetails['band_name']; ?>	
+											</a>
+										</li>
+							<?php   } ?>
+						</ul>
+						</p>
 					</div>
 				</div>
 			</div>
@@ -86,42 +118,42 @@
 				</div>
 			</div>
 			<div class="col-sm-6 col-md-4">
-				<?php
-					
-					while ($row = $query->fetch(PDO::FETCH_ASSOC))
-					{	
-						$followed_uid = $row['followed_uid'];
-						$query1 = $dbo->getUserDetails($followed_uid);
-						$row_userdetails = $query1->fetch(PDO::FETCH_ASSOC);
-						?>
-					   <div class="row-fluid" style="margin-top: 20px;">
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h3 class="panel-title">
-										<a href="./profile.php?user_name=<?php echo $row_userdetails['user_name']?>&redirected=true">
-											<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-											<?php echo $row_userdetails['user_fname'] . ' ' . $row_userdetails['user_lname']; ?>	
-										</a>
-										<a href="./friends.php?unfollow_uid=<?php echo $row_userdetails['user_id']?>&redirected=trueZ&unfollow_name=<?php echo $row_userdetails['user_name']?>">
-											<span class="glyphicon glyphicon-minus" aria-hidden="true" name="gly_unfollow"></span>
-										</a>
-									</h3>
-									
-								</div>
-								<div class="panel-body">
-									<div class="col-lg-3">
-										<div class="input-group">
-											<p>Gender: <?php echo $row_userdetails['user_gender']; ?></p>
-										</div><!-- /input-group -->
-									</div><!-- /.col-lg-3 -->
-								</div><!-- panel-body -->
-							</div><!-- Panel Profile Details -->
-						</div>
-					<?php } ?>
-			</div>
-		</div><!-- / row-fluid -->
-    </div>
-
+				<!--<div class="thumbnail">-->
+					<div class="row-fluid" style="margin-top: 0px;">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<h3 class="panel-title">
+									This month
+								</h3>
+							</div>
+							<div class="panel-body">
+								<div class="col-lg-3">
+									<?php 
+										$year = date('Y');
+										//echo $year;
+										$month = date('m');
+										//echo $month;
+										$cal = new activeCalendar($year,$month);
+										//echo $cal->showMonth();
+										$query2 = $dbo->getThisMonthConcerts($user_id);
+										while($row_concerts = $query2->fetch(PDO::FETCH_ASSOC))
+										{
+											$eventDay = $row_concerts['concert_sdate']."";
+											$eventDay = explode('-', $eventDay)[2];
+											//echo $eventDay;
+											$eventUrl = "./concert.php?concert_id=".$row_concerts['concert_id'];
+											$cal->setEventContent($year,$month,$eventDay,$row_concerts['concert_name'],$eventUrl);
+										}
+										echo $cal->showMonth();
+									?>
+								</div><!-- /.col-lg-3 -->
+							</div><!-- panel-body -->
+						</div><!-- Panel Profile Details -->
+					</div>
+				<!--</div>-->
+			</div><!-- / row-fluid -->
+		</div>
+	</div>
     <?php include 'footer.php'; ?>
     </body>
 </html>

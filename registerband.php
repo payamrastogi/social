@@ -12,6 +12,7 @@
   if (isset($_POST['pas_band_user_password']) && 
 		isset($_POST['pas_band_user_conf_password']) && 
 		isset($_POST['txt_band_name']) && 
+		isset($_POST['txt_num_of_members']) &&
 		isset($_POST['txt_band_user_name']) && 
 		isset($_POST['submit']))
 	{
@@ -19,6 +20,7 @@
 		require 'dbHelper.php';
 		$dbo = new db();
 		$band_name = $_POST['txt_band_name'];
+		$band_num_members = $_POST['txt_num_of_members'];
 		$band_user_name = $_POST['txt_band_user_name'];
 		$band_user_password = $_POST['pas_band_user_password'];
 		$band_user_conf_password = $_POST['pas_band_user_conf_password'];
@@ -30,30 +32,28 @@
 		$band_user_name = str_replace(' ', '', $band_user_name);
 		$band_user_password = str_replace(' ', '', $band_user_password);
 		
-		//echo $_POST['pas_user_password'];
-		//echo $_POST['txt_user_email'];
-		//echo $_POST['txt_user_name'];
-		//echo $_POST['txt_user_fname'];
-		//echo $_POST['txt_user_lname'];
 
 		if (strlen($band_user_password) < 2)
+		{
 			$error = $error . " - Passwords must be 6 characters or more";
+		}
+		elseif (! filter_var( $band_num_members, FILTER_VALIDATE_INT ))
+		{
+			$error = $error . ' - Invalid number';
+		}
 		elseif($band_user_password == $band_user_conf_password)
 		{
 			if($dbo->bandExists($band_user_name) || $band_user_name == '' || $band_user_name == ' ')
 				$error = $error . ' - Username already in use';
 			else
 			{
-				$band_id = $dbo->createBand($band_name, $band_user_name, $band_user_password, $band_website );
-				//echo "112";
-				//echo "hello".$user_id;
-				//if (! )
-				//	$error = $error . ' - an error occured';
+				$band_id = $dbo->createBand($band_name, $band_user_name, $band_user_password, $band_website,$band_num_members );
 				if(isset($band_id))
 				{
 					$_SESSION['sess_band_name'] = $band_name;
 					$_SESSION['sess_band_user_name'] = $band_user_password;
 					$_SESSION['sess_band_id'] = $band_id;
+					$_SESSION['sess_band_num_members']=$band_num_members;
 					//echo $user_id;
 					header('Location: ./genre.php');
 				}
@@ -67,10 +67,13 @@
 		{
 			$error = $error . " - Username must be 3 characters or more";
 		}
-		//if (strlen($band_website) < 3 || ! filter_var( $band_website, FILTER_VALIDATE_EMAIL )) 
-		//{
-		//	$error = $error . " - Email not real";
-		//}
+		if(isset($band_website) && $band_website!='')
+		{
+			if (strlen($band_website) < 3 || ! filter_var( $band_website, FILTER_VALIDATE_URL )) 
+			{
+				$error = $error . " - Website not real";
+			}
+		}
 	}
 ?>
 
@@ -139,10 +142,12 @@
       <form class="form-register" action="" method="post">
         <h2 class="form-register-heading">Register</h2>
 		<input type="text" class="input-block-level" placeholder="Band Name" name="txt_band_name">
+		<input type="text" class="input-block-level" placeholder="# of members" name="txt_num_of_members">
 		<input type="text" class="input-block-level" placeholder="Band Website" name="txt_band_website">
 		<input type="text" class="input-block-level" placeholder="Username" name="txt_band_user_name">
         <input type="password" class="input-block-level" placeholder="Password" name="pas_band_user_password">
         <input type="password" class="input-block-level" placeholder="Confirm Password" name="pas_band_user_conf_password">
+			
         <center>
 			<button class="btn btn-large btn-primary" type="submit" name="submit">Register</button>
         </center>

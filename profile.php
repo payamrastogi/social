@@ -73,6 +73,9 @@
 
     <div class="container" style="position: relative; top: 40px;">
         <ul class="nav nav-tabs">
+		<li class="">
+				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
+			</li>
         <li class="active">
           <a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
         </li>

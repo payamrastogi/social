@@ -7,25 +7,50 @@
    $errorMessage = '';
    if (isset($_POST['btn_submit']))
    {
-		//echo "1";
-       if ($row = $pdo->verifyLogin($_POST['txt_user_name'], $_POST['pass_user_password']))
-       {
+		if($_POST['rd_user_type']=='user')
+		{
+			if ($row = $pdo->verifyLogin($_POST['txt_user_name'], $_POST['pass_user_password']))
+			{
 
-          $_SESSION['sess_user_type'] = $row['user_type'];
-          $_SESSION['sess_user_name'] = $row['user_name'];
-		  $_SESSION['sess_user_id'] = $row['user_id'];
+				$_SESSION['sess_user_type'] = $row['user_type'];
+				$_SESSION['sess_user_name'] = $row['user_name'];
+				$_SESSION['sess_user_id'] = $row['user_id'];
 
-          if ($_SESSION['userType'] == 'admin')
-          {
-             header('Location: ./admin.php');
-          }
-          else
-          {
-             header('Location: ./home.php?user_name=' . $row['user_name']);
-          }
-       }
-       else
-           $errorMessage = $errorMessage . ' - Incorrect username or password';
+				if ($_SESSION['userType'] == 'admin')
+				{
+					header('Location: ./admin.php');
+				}
+				else
+				{
+					header('Location: ./home.php?user_name=' . $row['user_name']);
+				}
+			}
+			else
+				$errorMessage = $errorMessage . ' - Incorrect user username or password';
+		}
+		elseif($_POST['rd_user_type']=='band')
+		{
+			if ($row = $pdo->verifyBandLogin($_POST['txt_user_name'], $_POST['pass_user_password']))
+			{
+				$_SESSION['sess_band_user_name'] = $row['band_user_name'];
+				$_SESSION['sess_band_name'] = $row['band_name'];
+				$_SESSION['sess_band_id'] = $row['band_id'];
+				$_SESSION['sess_band_website'] = $row['band_website'];
+				$_SESSION['sess_band_members'] = $row['band_members'];
+
+				if (isset($_SESSION['userType']) && $_SESSION['userType']== 'admin')
+				{
+					header('Location: ./admin.php');
+				}
+				else
+				{
+					//echo "hello";
+					header('Location: ./bandHome.php?band_user_name=' . $row['band_user_name']);
+				}
+			}
+			else
+				$errorMessage = $errorMessage . ' - Incorrect band username or password';
+		}
    }
 ?>
 
@@ -93,6 +118,10 @@
         <h2 class="form-signin-heading">Sign In</h2>
         <input type="text" class="input-block-level" placeholder="Username" name="txt_user_name">
         <input type="password" class="input-block-level" placeholder="Password" name="pass_user_password">
+		<br/>
+		<input type="radio" class="input-block-level"  id="rd_user" name="rd_user_type" value="user">&nbsp;User&nbsp;
+		<input type="radio" class="input-block-level"  id="rd_band" name="rd_user_type" value="band">&nbsp;Band&nbsp;
+		<br/>
         <center>
         <button class="btn btn-large btn-primary" type="submit" name="btn_submit">Sign in</button>
         </center>

@@ -1,0 +1,44 @@
+Site selection for Data center
+Aspects such as proximity to available power grids, telecommunications infrastructure, networking services, transportation lines and emergency services can affect costs, risk, security and other factors to be taken into consideration for data center design. Location affects data center design also because the climatic conditions dictate what cooling technologies should be deployed. In turn this impacts uptime and the costs associated with cooling.[30] For example, the topology and the cost of managing a data center in a warm, humid climate will vary greatly from managing one in a cool, dry climate.
+source : http://en.wikipedia.org/wiki/Data_center
+
+
+Today, largely because of remote access capabilities, data centers can be built anywhere in the world and be accessible from anywhere there is an Internet connection. As businesses have become more cost-conscious and more concerned about the environmental impact of technology, their data center location criteria have changed considerably. The top four key factors that need to be considered when choosing a data center’s physical location are:
+
+1. Access to power today and in the future. 
+Power consumption is on the rise, and brownouts and blackouts are becoming more common in areas that have poor power infrastructure. Data centers require enormous amounts of power, and failures can cause unexpected downtime.
+2. Cooling and climate. 
+Everything about a data center generates heat, and cooling the facilities can be expensive and challenging. Data centers built in cooler climates can reduce costs because outside air can be used to chill the data center.
+3.Proximity to risk. 
+Data centers aren’t indestructible. Building them on fault lines, on flood plains, below sea level, or in the path of air traffic create unnecessary risk for the facility.
+4. Data security. 
+Privacy concerns and compliance regulations require certain types of data (in particular, customers’ personal data) be stored within the region or nation that it’s collected. National legislation like the USA’s Patriot Act may also put data at risk because of the broad powers it grants governments for seizing corporate data. Political instability also causes concern regarding data security.
+With these four criteria in mind, there are five regions that stand out as ideal locations for data centers:
+
+
+New York State
+
+Data centers have been migrating out of New York City, where real estate costs are high, to other areas of the state, in particular western New York. The state provides tax exemptions for data centers, has a solid power infrastructure, and offers excellent access to various metropolitan areas, including New York City and Toronto.
+https://gigaom.com/2011/12/10/latimer-where-to-build-data-center/
+NY	$11,590,113
+
+
+en.wikipedia.org/wiki/Energy_in_Russia
+Russia Novosibersk
+India
+http://www.hpl.hp.com/techreports/2005/HPL-2005-107R1.pdf
+$24,000,00
+http://www.hpl.hp.com/techreports/2005/HPL-2005-107R1.pdf
+
+
+http://www.greendatacenter.ch/enus/Locationbenefits.aspx
+Switzerland is-considered to be one of the best data center locations in the world. The Reasons for choosing Switzerland as a datacenter location are its top class infrastructures, top quality standards, high level of legal security, economic and social stability, and comprehensive data protection.
+
+
+http://www.disaster-report.com/2013/02/natural-disasters-in-russia-2013.html
+
+http://www.greendatacenter.ch/enus/Locationbenefits.aspx
+
+http://en.wikipedia.org/wiki/List_of_countries_by_natural_disaster_risk
+
+http://he.net/ip_transit/?a=48320210233&n=g&pos=1t1&p=&t=&m=p&k=internet%20backbone%20map&gclid=Cj0KEQiAqYCkBRC4xNiSu5-Y-PcBEiQA96OM9P-psh4DrMfc7-WVaxiDHQo3SVYS0WIrjIyP58KqEOoaApmr8P8HAQ
