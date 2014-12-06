@@ -12,7 +12,7 @@
 
 		//echo "123"; 
 		$sel_criteria = $_GET['sel_criteria'];
-		$user_name = $$_GET['user_name']
+		$user_name = $_GET['user_name'];
 		//header('Location: ./searchConcertResult.php?user_name='.$user_name.'&genre_name='.$genre_name);
 		$successMessage = $successMessage;
 	}
@@ -159,7 +159,7 @@
                 else
                 {
                     $previousPage = $page - 1;
-                    echo "<li><a href='./searchConcertResult.php?page=$i&user_name=$user_name&sel_criteria=$sel_criteria'>Prev</a></li>";
+                    echo "<li><a href='./searchConcertResult.php?page=$previousPage&user_name=$user_name&sel_criteria=$sel_criteria'>Prev</a></li>";
                 }
 
 
@@ -176,7 +176,7 @@
                 else
                 {
                     $nextPage = $page+1;
-                    echo "<li><a href='./searchConcertResult.php?page=$i&user_name=$user_name&sel_criteria=$sel_criteria'>Next</a></li>";
+                    echo "<li><a href='./searchConcertResult.php?page=$nextPage&user_name=$user_name&sel_criteria=$sel_criteria'>Next</a></li>";
                 }
 
                 ?>
