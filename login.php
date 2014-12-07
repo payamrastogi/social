@@ -17,6 +17,7 @@
 				$_SESSION['sess_user_id'] = $row['user_id'];
 				$_SESSION['sess_user_time'] = date('Y-m-d H:i:s');
 				$_SESSION['sess_user_ctime'] = $row['user_ctime'];
+				$_SESSION['sess_user_repo'] = $row['user_repo'];
 
 				if ($_SESSION['userType'] == 'admin')
 				{

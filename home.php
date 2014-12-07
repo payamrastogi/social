@@ -68,6 +68,10 @@
 			<li class=""><a href="fanof.php">Fan of</a></li>
 			<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
 			<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
+			<?php if($_SESSION['sess_user_repo'] > 12)
+			{?>
+				<li class=""><a href="addConcertUser.php">Add Concerts</a></li>
+			<?php } ?>
 		</ul>
         <?php echo "<div style=\"font-size: 40px;\">$fullName</div>"; ?>
 		<p>Last accessed @ <?php echo $last_accessed; ?></p>
