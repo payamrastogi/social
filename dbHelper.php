@@ -1218,7 +1218,7 @@
             $goFor = (int)$goFor;
 
             //base search:
-            $queryString = "select * from lists where concert_id not in (select concert_id from lists where list_id = '$list_id')";
+            $queryString = "select * from concerts where concert_id not in (select concert_id from lists where list_id = '$list_id')";
 			
             if ($goFor != -1 && $start == -1)
 				$queryString = $queryString .  " LIMIT 0, $goFor";

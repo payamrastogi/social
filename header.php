@@ -60,7 +60,7 @@ function curPageName() {
                                echo "<li class='$cssClass'><a href=\"admin.php\">Admin Panel</a></li>";
                            }
                         }
-                        if (isset($_SESSION['sess_user_type']) && ($_SESSION['sess_user_type'] == 'user' || $_SESSION['sess_user_type'] == 'admin'))
+                        if (isset($_SESSION['sess_user_type']) && ($_SESSION['sess_user_type'] == 'user' || $_SESSION['sess_user_type'] == 'admin' || $_SESSION['sess_user_type'] == 'artist'))
                         {
                             $strToPrint = "<li>
                                     <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">".

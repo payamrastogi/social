@@ -6,7 +6,11 @@
 	$redirected = '';
 	$successMessage = '';
     $errorMessage = '';
-	$user_id = $_SESSION['sess_user_id'];
+	if(isset($_SESSION['sess_user_id']))
+	{
+		$user_id = $_SESSION['sess_user_id'];
+	}
+	
 	if (isset($_POST['txt_review']) && $_POST['txt_review'] != '')
 	{
 		$review = $_POST['txt_review'];
@@ -41,7 +45,10 @@
     else
     {
         $concert_id = $_GET['concert_id'];
-		$user_id = $_SESSION['sess_user_id'];
+		if(isset($_SESSION['sess_user_id']))
+		{
+			$user_id = $_SESSION['sess_user_id'];
+		}
 		if(isset($_GET['redirected']))
 		{
 			$redirected = $_GET['redirected'];
@@ -202,16 +209,17 @@
 					<!--<img data-src="holder.js/300x300" alt="...">-->
 					<div class="caption">
 					<?php 
-						//echo $user_id;
-						//echo $concert_id;
-						$queryEntry = $dbo->checkCalendarEntry($user_id, $concert_id);
-						if(!$queryEntry)
-						{ ?>
-						<form method="post" action="">
-							<input type="hidden" id="hid_concert_id" name="hid_cal_concert_id" value="<?php echo $concert_id; ?>" />
-							<button type="submit" class="btn btn-primary" name="btn_calendar" id="btn_calendar">Add to calendar</button>
-						</form>
-						<?php }?>
+						if(isset($user_id))
+						{
+							$queryEntry = $dbo->checkCalendarEntry($user_id, $concert_id);
+							if(!$queryEntry)
+							{ ?>
+							<form method="post" action="">
+								<input type="hidden" id="hid_concert_id" name="hid_cal_concert_id" value="<?php echo $concert_id; ?>" />
+								<button type="submit" class="btn btn-primary" name="btn_calendar" id="btn_calendar">Add to calendar</button>
+							</form>
+						<?php }
+						}?>
 						<br/>
 						<p>Description : <?php echo $concert_description ?></p>
 						<p>Start: <?php echo $concert_sdate." ".$concert_stime ; ?> </p>
@@ -280,11 +288,14 @@
 			<div class="col-sm-18 col-md-12">
 				<div class="thumbnail">
 					<div class="caption">
-						<h3>Reviews</h3>
+						
 						<?php
-							$query3 = $dbo->getUserDetails($user_id);
-							$row_userdetails = $query3->fetch(PDO::FETCH_ASSOC);
+							if(isset($user_id))
+							{
+								$query3 = $dbo->getUserDetails($user_id);
+								$row_userdetails = $query3->fetch(PDO::FETCH_ASSOC);
 							?>
+							<h3>Reviews</h3>
 							<form method="post" action="">
 							<div class="row-fluid" style="margin-top: 20px;">
 									<div class="panel panel-default">
@@ -303,7 +314,7 @@
 									</div><!-- Panel Profile Details -->
 								</div>
 							</form>
-						<?php
+						<?php }
 							$query3 = $dbo->getReviews($concert_id);
 							while ($row_reviews = $query3->fetch(PDO::FETCH_ASSOC))
 							{	

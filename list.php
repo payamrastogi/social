@@ -147,7 +147,8 @@
                     echo "<li><a href='./list.php?page=$previousPage'>Prev</a></li>";
                 }
 
-
+				//echo $page;
+				//echo $numPages;
                 for ($i=1; $i < $numPages+1; $i++)
                 {
                     $theClass = '';
