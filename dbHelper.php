@@ -552,12 +552,18 @@
 		
 		public function getTicketShopDetails($concert_id)
 		{
-			$queryString = "select t2.shop_id, t2.shop_name, t2.shop_street, t2.shop_city, t2.shop_country, t2.shop_oname, t2.shop_pnumber 
-							from tickets t1, ticketshops t2
-							where t1.concert_id = '$concert_id'
-							and t1.shop_id = t2.shop_id;";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select t2.shop_id, t2.shop_name, t2.shop_street, t2.shop_city, t2.shop_country, t2.shop_oname, t2.shop_pnumber from tickets t1, ticketshops t2 where t1.concert_id = :concert_id and t1.shop_id = t2.shop_id";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getThisMonthConcerts($user_id)
@@ -1239,6 +1245,22 @@
             $queryString = "Insert into lists(list_id, concert_id) values ('$list_id', '$concert_id');";
             $query = $this->pdo->query($queryString);
         }
+		
+		public function getRecommendedConcert($user_id)
+		{
+			try
+			{
+				$query = "select c.concert_id, c.concert_name, count(*) from lists l1, concerts c where l1.list_id in (select list_id from listgenres l, usergenres u where l.genre_id in (select genre_id from usergenres where user_id=:user_id)) and c.concert_id = l1.concert_id and c.concert_id not in (select concert_id from lists l, recommendedlist r where l.list_id = r.list_id and r.user_id = :user_id) group by c.concert_id having count(*) > 1;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_STR);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
+		}
     }
 ?>
 

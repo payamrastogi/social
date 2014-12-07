@@ -75,12 +75,11 @@
 		</ul>
         <?php echo "<div style=\"font-size: 40px;\">$fullName</div>"; ?>
 		<p>Last accessed @ <?php echo $last_accessed; ?></p>
-		<?php echo $_SESSION['sess_user_time']; ?>
 		<div class="row">
 			<div class="col-sm-6 col-md-2">
 				<div class="progress">
 					<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="<?php echo $trust_score; ?>" aria-valuemin="0" aria-valuemax="20" style="width: <?php echo ($trust_score/20)*100; ?>%;">
-						Trust Score: <?php echo $trust_score; ?>
+						TrustScore:<?php echo $trust_score; ?>
 					</div>
 				</div>
 			</div>
@@ -129,9 +128,17 @@
 				<div class="thumbnail">
 					<!--<img data-src="holder.js/300x300" alt="...">-->
 					<div class="caption">
-						<h3>Bands Performing</h3>
-						<p>
-							
+						<h3>Recommended concerts for you</h3>
+						<?php $query3 = $dbo->getRecommendedConcert($user_id);
+							while ($row_recommended = $query3->fetch(PDO::FETCH_ASSOC))
+							{	?> 
+								<p>
+								<a href="./concert.php?concert_id=<?php echo $row_recommended['concert_id']?>&redirected=true">
+													<span class="glyphicon glyphicon-headphones" aria-hidden="true"></span>
+													<?php echo $row_recommended['concert_name']; ?>	
+												</a>
+												</p>
+					<?php		} ?>
 					</div>
 				</div>
 			</div>
