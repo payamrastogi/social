@@ -104,6 +104,7 @@
 										</li>
 							<?php   } ?>
 						</ul>
+						<a href="fanof.php">More...</a>
 						</p>
 					</div>
 				</div>

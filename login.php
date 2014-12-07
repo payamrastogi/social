@@ -35,6 +35,7 @@
 				$_SESSION['sess_band_user_name'] = $row['band_user_name'];
 				$_SESSION['sess_band_name'] = $row['band_name'];
 				$_SESSION['sess_band_id'] = $row['band_id'];
+				$_SESSION['sess_user_type'] = $_POST['rd_user_type'];
 				$_SESSION['sess_band_website'] = $row['band_website'];
 				$_SESSION['sess_band_members'] = $row['band_members'];
 

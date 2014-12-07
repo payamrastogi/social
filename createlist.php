@@ -75,7 +75,7 @@
 			<div class="container" style="position: relative; top: 10px;">
 				<form class="navbar-form navbar-left" role="search" action="createlist.php" method="get">
 						<div class="form-group">
-							<button type="submit" class="btn btn-primary btn-large" name="createlist">Create New List</button>
+							<input type="submit" class="form-control" placeholder="Search bands" name="createlist">
 						</div>
 				</form>
 			</div>

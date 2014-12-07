@@ -1116,6 +1116,48 @@
 			$xmlStr=str_replace("&",'&amp;',$xmlStr);
 			return $xmlStr;
 		}
+		
+		public function getRecommendedList($user_id, $start, $goFor)
+        {
+            /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select * from recommendedlist";
+
+            if (str_replace(' ', '', $user_id) != '')
+                $queryString = $queryString . " where user_id='$user_id'";
+
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+        }
+		
+		public function getListConcerts($list_id)
+        {
+            $queryString = "select * from lists";
+            if (str_replace(' ', '', $list_id) != '')
+                $queryString = $queryString . " where list_id='$list_id';";
+            $query = $this->pdo->query($queryString);
+            return $query;
+        }
     }
 ?>
 

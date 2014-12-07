@@ -8,18 +8,18 @@ function curPageName() {
 }
 ?>
 
-<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="./css/bootstrap.css" />
 <style type="text/css">
     body{
         padding-top: 0px;
     }
 </style>
-<link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />
+<link rel="stylesheet" type="text/css" href="./css/bootstrap-responsive.css" />
 
 
 <script src="http://code.jquery.com/jquery.min.js"></script>
-<script src="js/bootstrap.js"></script>
-
+<script src="./js/bootstrap.js"></script>
+<script src="./js/validator.js"></script>
 <nav class="navbar navbar-default" role="navigation">
 	 <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -68,9 +68,23 @@ function curPageName() {
                                         "<span class=\"caret\"></span>
                                     </a>
                                     <ul class=\"dropdown-menu\" role=\"menu\">
-                                        <li><a href=\"profile.php?user_name=" . $_SESSION['sess_user_name'] . "\">Profile</a></li>
-                                        <li><a href=\"messages.php\">Messages</a></li>
+                                        <li><a href=\"home.php?user_name=" . $_SESSION['sess_user_name'] . "\">Home</a></li>
                                         <li><a href=\"settings.php\">Settings</a></li>
+                                        <li class=\"divider\"></li>
+                                        <li><a href=\"logout.php\">Logout</a></li>
+                                    </ul>
+                            </li>";
+                            echo "$strToPrint";
+                        }
+						else if (isset($_SESSION['sess_band_user_name']) && ($_SESSION['sess_user_type'] == 'band' || $_SESSION['sess_user_type'] == 'admin'))
+                        {
+                            $strToPrint = "<li>
+                                    <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">".
+                                        $_SESSION['sess_band_user_name'].
+                                        "<span class=\"caret\"></span>
+                                    </a>
+                                    <ul class=\"dropdown-menu\" role=\"menu\">
+                                        <li><a href=\"bandHome.php?band_user_name=" . $_SESSION['sess_band_user_name'] . "\">Home</a></li>
                                         <li class=\"divider\"></li>
                                         <li><a href=\"logout.php\">Logout</a></li>
                                     </ul>
