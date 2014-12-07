@@ -6,21 +6,14 @@
 	$successMessage = '';
 	$check =0;
 	$queryAll ='';
-	if(isset($_GET['genre_name']))
+	if(isset($_GET['sel_criteria']) && $_GET['sel_criteria']==8)
 	{
 		$check =1;
-		//echo "hello";
-		if($_GET['sel_criteria']==0)
-		{
-			//echo "123"; 
-			$genre_name = $_GET['genre_name'];
-			$sel_criteria = $_GET['sel_criteria'];
-			$queryGenreId = $dbo->getGenreId($genre_name);
-			$row_genreid = $queryGenreId->fetch(PDO::FETCH_ASSOC);
-			$genre_id = $row_genreid['genre_id'];
-			$queryAll = $dbo->getGenreConcerts($genre_id, -1, -1); //Used for counting rows
-			//header('Location: ./searchConcertResult.php?user_name='.$user_name.'&genre_name='.$genre_name);
-		}
+
+		//echo "123"; 
+		$sel_criteria = $_GET['sel_criteria'];
+		$user_name = $_GET['user_name'];
+		//header('Location: ./searchConcertResult.php?user_name='.$user_name.'&genre_name='.$genre_name);
 		$successMessage = $successMessage;
 	}
 	
@@ -43,7 +36,7 @@
     }
     
 	//echo "hello".$queryAll;
-	
+	$queryAll = $dbo->getUpcomingConcertAll(-1,-1);; //Used for counting rows
     $numResults = $queryAll->rowCount();
 	//echo "2".$user_id;
 	//echo "1".$numResults;
@@ -57,7 +50,7 @@
 
     $startFrom = ($page - 1) * $resultsPerPage;
 
-    $query = $dbo->getGenreConcerts($genre_id, $startFrom, $resultsPerPage);
+    $query = $dbo->getUpcomingConcertAll($startFrom, $resultsPerPage);
  ?>
 
 <!DOCTYPE html>
@@ -116,8 +109,7 @@
 					</div>";
 			?>
            <?php
-			
-            while ($row = $query->fetch(PDO::FETCH_ASSOC))
+		   while ($row = $query->fetch(PDO::FETCH_ASSOC))
             {	
 				$concert_id = $row['concert_id'];
 				$query1 = $dbo->getConcertDetails($concert_id);
@@ -129,7 +121,7 @@
 							<h3 class="panel-title">
 								<a href="./concert.php?concert_id=<?php echo $concert_id; ?>&redirected=true">
 									<span class="glyphicon glyphicon-headphones" aria-hidden="true"></span>
-										<?php echo $row_concertdetails['concert_name']; ?>	
+										<?php echo $row['concert_name']; ?>	
 								</a>
 							</h3>
 						</div>
@@ -148,15 +140,15 @@
 									{ ?>
 										<p>You Rated:<?php echo $row['rating'];?></p>
 								<?php } ?>
-									<p>Description:<?php echo $row_concertdetails['concert_description'];?></p>
-									<p>Start date:<?php echo $row_concertdetails['concert_sdate'];?></p>
-									<p>End date:<?php echo $row_concertdetails['concert_edate'];?></p>
+									<p>Description:<?php echo $row['concert_description'];?></p>
+									<p>Start date:<?php echo $row['concert_sdate'];?></p>
+									<p>End date:<?php echo $row['concert_edate'];?></p>
 								</div><!-- /input-group -->
 							</div><!-- /.col-lg-3 -->
 						</div><!-- panel-body -->
 					</div><!-- Panel Profile Details -->
 				</div>
-            <?php } ?>
+			<?php } ?>
             <nav>
               <ul class="pagination">
 
@@ -166,7 +158,7 @@
                 else
                 {
                     $previousPage = $page - 1;
-                    echo "<li><a href='./searchConcertResult.php?page=$previousPage&genre_name=$genre_name&sel_criteria=$sel_criteria'>Prev</a></li>";
+                    echo "<li><a href='./searchConcertResultAll.php?page=$previousPage&user_name=$user_name&sel_criteria=$sel_criteria'>Prev</a></li>";
                 }
 
 
@@ -175,7 +167,7 @@
                     $theClass = '';
                     if($i == $page)
                         $theClass = 'active';
-                    echo "<li class='$theClass'><a href='./searchConcertResult.php?page=$i&genre_name=$genre_name&sel_criteria=$sel_criteria'>$i</a></li>";
+                    echo "<li class='$theClass'><a href='./searchConcertResultAll.php?page=$i&user_name=$user_name&sel_criteria=$sel_criteria'>$i</a></li>";
                 }
 
                 if ($page == $numPages)
@@ -183,7 +175,7 @@
                 else
                 {
                     $nextPage = $page+1;
-                    echo "<li><a href='./searchConcertResult.php?page=$nextPage&genre_name=$genre_name&sel_criteria=$sel_criteria'>Next</a></li>";
+                    echo "<li><a href='./searchConcertResultAll.php?page=$nextPage&user_name=$user_name&sel_criteria=$sel_criteria'>Next</a></li>";
                 }
 
                 ?>

@@ -278,9 +278,7 @@
 		
 		public function getConcertDetails($concert_id)
 		{
-			$queryString = "select concert_id, concert_name, concert_sdate, concert_stime, concert_edate,concert_etime, concert_lid, concert_capacity, 			concert_tcost, concert_description
-							from concerts
-							where concert_id = '$concert_id';";
+			$queryString = "select concert_id, concert_name, concert_sdate, concert_stime, concert_edate,concert_etime, concert_lid, concert_capacity, concert_tcost, concert_description from concerts where concert_id = '$concert_id';";
 			$query = $this->pdo->query($queryString);
 			return $query;
 		}
@@ -308,6 +306,125 @@
 
             //base search:
             $queryString = "select * from concerts where concert_sdate > date(now())";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
+		
+		public function getUpcomingConcertPast($start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select * from concerts where concert_sdate < date(now())";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
+		
+		public function getUpcomingConcertAll($start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select * from concerts";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
+		public function getUpcomingConcertMonth($start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select * from concerts where datediff(concert_sdate, date(now())) between 0 and 30";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
+		
+		public function getUpcomingConcertWeek($start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select * from concerts where datediff(concert_sdate, date(now())) between 0 and 7";
 			
             if ($goFor != -1 && $start == -1)
 				$queryString = $queryString .  " LIMIT 0, $goFor";
