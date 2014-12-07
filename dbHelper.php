@@ -49,10 +49,10 @@
                 return false;
         }
 		
-		 public function doLogout($user_id)
+		 public function doLogout($user_id, $score)
         {
-			echo "yry";
-            $queryString ="Update users set user_laccess = now() where user_id='$user_id'";
+			//echo "yry";
+            $queryString ="Update users set user_laccess = now(),user_repo = user_repo+$score where user_id='$user_id'";
             $query = $this->pdo->query($queryString);
             return $query;
         }
@@ -952,6 +952,29 @@
                 return false;
         }
 		
+		public function createList($list_name, $user_id)
+        {
+			try 
+			{
+				$sql = 'CALL insert_list(:list_name,:user_id,@list_id)';
+				$stmt = $this->pdo->prepare($sql);
+				$stmt->bindParam(':list_name', $list_name, PDO::PARAM_STR);
+				$stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+				$stmt->execute();
+				$stmt->closeCursor();
+				$r = $this->pdo->query("SELECT @list_id AS list_id")->fetch(PDO::FETCH_ASSOC);
+				//if ($r) 
+				//{
+					//echo sprintf('Customer is %s', $r['user_id']);
+				//}
+				return $r['list_id'];
+			} 
+			catch (PDOException $pe) 
+			{
+				die("Error occurred:" . $pe->getMessage());
+			}
+        }
+		
 		 public function insertConcertByBand($concert_name,$concert_sdate,$concert_stime, $concert_edate, $concert_etime, $concert_lid, $concert_tcost, $concert_capacity, $concert_description)
         {
 				
@@ -1063,6 +1086,11 @@
             $queryString = "insert into concertgenres(genre_id, concert_id) values ($genre_id, $concert_id);";
             $query = $this->pdo->query($queryString);
         }
+		public function insertGenreList($list_id, $genre_id)
+        {
+            $queryString = "insert into listgenres(genre_id, list_id) values ($genre_id, $list_id);";
+            $query = $this->pdo->query($queryString);
+        }
 		public function insertShopConcert($concert_id, $shop_id)
         {
             $queryString = "insert into tickets(shop_id, concert_id) values ($shop_id, $concert_id);";
@@ -1157,6 +1185,59 @@
                 $queryString = $queryString . " where list_id='$list_id';";
             $query = $this->pdo->query($queryString);
             return $query;
+        }
+		
+		public function deleteList($list_id,$user_id)
+		{
+			try 
+			{
+				$sql = 'CALL delete_list(:list_id,:user_id)';
+				$stmt = $this->pdo->prepare($sql);
+				$stmt->bindParam(':list_id', $list_id, PDO::PARAM_INT);
+				$stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+				$stmt->execute();
+				$stmt->closeCursor();
+			} 
+			catch (PDOException $pe) 
+			{
+				die("Error occurred:" . $pe->getMessage());
+			}
+		}
+		
+		public function getConcertNotInList($list_id,$start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select * from lists where concert_id not in (select concert_id from lists where list_id = '$list_id')";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
+		
+		public function addConcertToList($list_id, $concert_id)
+        {
+            $queryString = "Insert into lists(list_id, concert_id) values ('$list_id', '$concert_id');";
+            $query = $this->pdo->query($queryString);
         }
     }
 ?>

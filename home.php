@@ -30,7 +30,6 @@
 			$redirected = $_GET['redirected'];
 			$_SESSION['redirected'] = $redirected;
 		}
-		//echo "12".$user_id;
 		if(isset($redirected))
 		{
 			$query = $dbo->getUserDetails($user_id);
@@ -38,6 +37,8 @@
 			if ($row = $query->fetch(PDO::FETCH_ASSOC))
 			{
 				$fullName = $row['user_fname'] . ' ' . $row['user_lname'];
+				$last_accessed = $row['user_laccess'];
+				$trust_score = $row['user_repo'];
 			}
 		}
     }
@@ -49,13 +50,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="./data/css/calendar.css">
-        <title><?php echo "$user_name"; ?></title>
+        <title>Home</title>
     </head>
     <body>
 
     <?php include 'header.php'; ?>
 
-    <div class="container" style="position: relative; top: 40px;">
+    <div class="container" style="position: relative; top: 0px;">
 		<ul class="nav nav-tabs">
 			<li class="active">
 				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
@@ -68,7 +69,18 @@
 			<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
 			<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
 		</ul>
-        <?php echo "<h3 style=\"font-size: 40px;\">$fullName</h3>"; ?>
+        <?php echo "<div style=\"font-size: 40px;\">$fullName</div>"; ?>
+		<p>Last accessed @ <?php echo $last_accessed; ?></p>
+		<?php echo $_SESSION['sess_user_time']; ?>
+		<div class="row">
+			<div class="col-sm-6 col-md-2">
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="<?php echo $trust_score; ?>" aria-valuemin="0" aria-valuemax="20" style="width: <?php echo ($trust_score/20)*100; ?>%;">
+						Trust Score: <?php echo $trust_score; ?>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-sm-6 col-md-4">
 				<div class="thumbnail">

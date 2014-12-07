@@ -4,13 +4,23 @@
     $dbo = new db();
 	$user_id = '';
 	$successMessage = '';
-	if(isset($_GET['unfan_band_id']))
+	if(isset($_POST['txt_list_name']) && isset($_POST['sel_genres']))
 	{
-		$unfan_band_id = $_GET['unfan_band_id'];
+		echo "hekkio";
+		$list_name = $_POST['txt_list_name'];
 		$user_id = $_SESSION['sess_user_id'];
-		$unfan_band_name = $_GET['unfan_band_name'];
-		$queryUnfanBand = $dbo->unfanBand($unfan_band_id, $user_id);
-		$successMessage = $successMessage . '- Unfollow '.$unfan_band_name;
+		$user_name = $_SESSION['sess_user_name'];
+		$sel_genres = $_POST['sel_genres'];
+		$list_id = $dbo->createList($list_name, $user_id);
+		if(is_array($sel_genres))
+		{
+			foreach($sel_genres as $genre_id)
+			{
+				//echo "hh";
+				$dbo->insertGenreList($list_id, $genre_id);
+			}
+		}
+		header('Location: ./list.php?user_name='.$user_name);
 	}
 	
 	if (!isset($_GET['user_name']))
@@ -29,6 +39,7 @@
     {
         $user_name = $_GET['user_name'];
 		$user_id = $_SESSION['sess_user_id'];
+		$_SESSION['sess_user_name'] = $user_name;
     }
     $queryAll = $dbo->getRecommendedList($user_id, -1, -1); //Used for counting rows
 	//echo "hello".$queryAll;
@@ -73,9 +84,35 @@
 				<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
 			</ul>
 			<div class="container" style="position: relative; top: 10px;">
-				<form class="navbar-form navbar-left" role="search" action="createlist.php" method="get">
-						<div class="form-group">
-							<input type="submit" class="form-control" placeholder="Search bands" name="createlist">
+				<form class="navbar-form navbar-left" role="search" action="createlist.php" method="POST">
+						<div class="input-group">
+							<label for="sel_genres">List Name</label>
+							<input type="text" class="form-control" placeholder="List Name" name="txt_list_name" required>
+						</div>
+						<br/>
+						<br/>
+						<div class="input-group">
+							<label for="sel_genres">Genre</label>
+							<select name="sel_genres[]" multiple class="form-control" required>
+							 <?php
+								$query = $dbo->getParentGenre();
+								while($row_genres = $query->fetch(PDO::FETCH_ASSOC))
+								{?> 
+							  <option value="<?php echo $row_genres['p_genre_id'];?>"><?php echo $row_genres['p_genre_name'];?></option>
+							<?php
+									$query5 = $dbo->getSubGenre($row_genres['p_genre_id']);
+									while($row_genres = $query5->fetch(PDO::FETCH_ASSOC))
+									{?>
+									<option value="<?php echo $row_genres['s_genre_id'];?>"><?php echo $row_genres['s_genre_name'];?></option>
+									<?php }
+								}
+							?>
+							</select>
+						</div>
+						<br/>
+						<br/>
+						<div class="input-group">
+							<button type="submit" class="btn btn-primary btn-large">Create List</button>
 						</div>
 				</form>
 			</div>
@@ -86,77 +123,6 @@
 					<strong>Success! </strong> $successMessage
 					</div>";
 			?>
-           <?php
-			
-            while ($row = $query->fetch(PDO::FETCH_ASSOC))
-            {	
-				$list_id = $row['list_id'];
-				$list_name = $row['list_name'];
-				$query1 = $dbo->getListConcerts($list_id);
-				?>
-				<div class="row-fluid" style="margin-top: 20px;">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">
-									<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
-									<?php echo $list_name ?>	
-								<a href="./list.php?delete_list_id=<?php echo $list_id; ?>&redirected=true&user_name=<?php echo $user_name;?>">
-									<span class="glyphicon glyphicon-minus" aria-hidden="true" name="gly_unfollow"></span>
-								</a>
-							</h3>
-							
-						</div>
-						<div class="panel-body">
-							<div class="col-lg-3">
-								<div class="input-group">
-									<?php 
-										while($row_concerts = $query1->fetch(PDO::FETCH_ASSOC))
-										{
-											$concert_id = $row_concerts['concert_id'];
-											$query2 = $dbo->getConcertDetails($concert_id);
-											$row_concertdetails = $query2->fetch(PDO::FETCH_ASSOC);
-									?>
-										<p><a href="./concert.php?concert_id=<?php echo $concert_id; ?>&redirected=true">
-										<?php echo $row_concertdetails['concert_name']; ?></a></p>
-								<?php } ?>
-								</div><!-- /input-group -->
-							</div><!-- /.col-lg-3 -->
-						</div><!-- panel-body -->
-					</div><!-- Panel Profile Details -->
-				</div>
-            <?php } ?>
-            <nav>
-              <ul class="pagination">
-
-                <?php
-                if ($page == 1)
-                    echo "<li class='disabled'><a href='#'>Prev</a></li>";
-                else
-                {
-                    $previousPage = $page - 1;
-                    echo "<li><a href='./fanof.php?page=$previousPage'>Prev</a></li>";
-                }
-
-
-                for ($i=1; $i < $numPages+1; $i++)
-                {
-                    $theClass = '';
-                    if($i == $page)
-                        $theClass = 'active';
-                    echo "<li class='$theClass'><a href='./fanof.php?page=$i'>$i</a></li>";
-                }
-
-                if ($page == $numPages)
-                    echo "<li class='disabled'><a href='#'>Next</a></li>";
-                else
-                {
-                    $nextPage = $page+1;
-                    echo "<li><a href='./fanof.php?page=$nextPage'>Next</a></li>";
-                }
-
-                ?>
-              </ul>
-            </nav>
         </div> <!-- /container -->
         <?php include 'footer.php'; ?>
     </body>

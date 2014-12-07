@@ -4,13 +4,28 @@
     $dbo = new db();
 	$user_id = '';
 	$successMessage = '';
-	if(isset($_GET['delete_list_id']) && isset($_GET['user_name']) && isset($_GET['list_name']))
+	$check =0;
+	$queryAll ='';
+	if(isset($_GET['list_id']))
 	{
-		$list_id = $_GET['delete_list_id'];
-		$user_id = $_SESSION['sess_user_id'];
-		$list_name = $_GET['list_name'];
-		$querydelete_list = $dbo->deleteList($list_id, $user_id);
-		$successMessage = $successMessage . '- Deleted '.$list_name;
+		$check =1;
+
+		//echo "123"; 
+		$user_name = $_GET['user_name'];
+		$list_id = $_GET['list_id'];
+
+		$successMessage = $successMessage;
+	}
+	if(isset($_GET['add_list_id']) && isset($_GET['concert_id']))
+	{
+		$check =1;
+
+		//echo "123"; 
+		$user_name = $_GET['user_name'];
+		$list_id = $_GET['add_list_id'];
+		$concert_id = $_GET['concert_id'];
+		$dbo->addConcertToList($list_id,$concert_id);
+		$successMessage = $successMessage."Concert Added to List";
 	}
 	
 	if (!isset($_GET['user_name']))
@@ -30,9 +45,9 @@
         $user_name = $_GET['user_name'];
 		$user_id = $_SESSION['sess_user_id'];
     }
-    $queryAll = $dbo->getRecommendedList($user_id, -1, -1); //Used for counting rows
+    
 	//echo "hello".$queryAll;
-	
+	$queryAll = $dbo->getConcertNotInList($list_id,-1,-1);; //Used for counting rows
     $numResults = $queryAll->rowCount();
 	//echo "2".$user_id;
 	//echo "1".$numResults;
@@ -46,7 +61,7 @@
 
     $startFrom = ($page - 1) * $resultsPerPage;
 
-    $query = $dbo->getRecommendedList($user_id, $startFrom, $resultsPerPage);
+    $query = $dbo->getConcertNotInList($list_id,$startFrom, $resultsPerPage);
  ?>
 
 <!DOCTYPE html>
@@ -54,7 +69,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Fan of</title>
+        <title>Concert</title>
     </head>
 
     <body>
@@ -73,10 +88,8 @@
 				<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
 			</ul>
 			<div class="container" style="position: relative; top: 10px;">
-				<form class="navbar-form navbar-left" role="search" action="createlist.php" method="get">
-						<div class="form-group">
-							<button type="submit" class="btn btn-primary btn-large">Create New List</button>
-						</div>
+				<form class="navbar-form navbar-left" role="search" action="searchConcert.php" method="get">
+						
 				</form>
 			</div>
 			<?php
@@ -87,50 +100,39 @@
 					</div>";
 			?>
            <?php
-			
-            while ($row = $query->fetch(PDO::FETCH_ASSOC))
+		   while ($row = $query->fetch(PDO::FETCH_ASSOC))
             {	
-				$list_id = $row['list_id'];
-				$list_name = $row['list_name'];
-				$query1 = $dbo->getListConcerts($list_id);
+				$concert_id = $row['concert_id'];
+				$query1 = $dbo->getConcertDetails($concert_id);
+				$row_concertdetails = $query1->fetch(PDO::FETCH_ASSOC);
 				?>
 				<div class="row-fluid" style="margin-top: 20px;">
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h3 class="panel-title">
-									<span class="glyphicon glyphicon-music" aria-hidden="true"></span>
-									<?php echo $list_name ?>	
-								<a href="./list.php?delete_list_id=<?php echo $list_id; ?>&redirected=true&user_name=<?php echo $user_name;?>&list_name=<?php echo $list_name;?>">
-									<span class="glyphicon glyphicon-minus" aria-hidden="true" name="gly_unfollow"></span>
+								<a href="./concert.php?concert_id=<?php echo $concert_id; ?>&redirected=true">
+									<span class="glyphicon glyphicon-headphones" aria-hidden="true"></span>
+										<?php echo $row_concertdetails['concert_name']; ?>	
 								</a>
+								<div class="input-group">
+									<a href="./addConcertToList.php?add_list_id=<?php echo $list_id; ?>&redirected=true&user_name=<?php echo $user_name;?>&concert_id=<?php echo $concert_id;?>">
+									<span class="glyphicon glyphicon-plus" aria-hidden="true" name="gly_unfollow"></span>
+								</a>
+								</div>
 							</h3>
-							
 						</div>
 						<div class="panel-body">
 							<div class="col-lg-3">
 								<div class="input-group">
-									<?php 
-										while($row_concerts = $query1->fetch(PDO::FETCH_ASSOC))
-										{
-											$concert_id = $row_concerts['concert_id'];
-											$query2 = $dbo->getConcertDetails($concert_id);
-											$row_concertdetails = $query2->fetch(PDO::FETCH_ASSOC);
-									?>
-										<p><a href="./concert.php?concert_id=<?php echo $concert_id; ?>&redirected=true">
-										<?php echo $row_concertdetails['concert_name']; ?></a></p>
-								<?php } ?>
-								</div>
-								<div class="input-group">
-									<a href="./addConcertToList.php?list_id=<?php echo $list_id; ?>&redirected=true&user_name=<?php echo $user_name;?>">
-									<span class="glyphicon glyphicon-plus" aria-hidden="true" name="gly_unfollow">Concert</span>
-								</a>
-								</div>
-								<!-- /input-group -->
+									<p>Description:<?php echo $row_concertdetails['concert_description'];?></p>
+									<p>Start date:<?php echo $row_concertdetails['concert_sdate'];?></p>
+									<p>End date:<?php echo $row_concertdetails['concert_edate'];?></p>
+								</div><!-- /input-group -->
 							</div><!-- /.col-lg-3 -->
 						</div><!-- panel-body -->
 					</div><!-- Panel Profile Details -->
 				</div>
-            <?php } ?>
+			<?php } ?>
             <nav>
               <ul class="pagination">
 
@@ -140,7 +142,7 @@
                 else
                 {
                     $previousPage = $page - 1;
-                    echo "<li><a href='./list.php?page=$previousPage'>Prev</a></li>";
+                    echo "<li><a href='./addConcertToList.php?page=$previousPage&user_name=$user_name&list_id=$list_id'>Prev</a></li>";
                 }
 
 
@@ -149,7 +151,7 @@
                     $theClass = '';
                     if($i == $page)
                         $theClass = 'active';
-                    echo "<li class='$theClass'><a href='./list.php?page=$i'>$i</a></li>";
+                    echo "<li class='$theClass'><a href='./addConcertToList.php?page=$i&user_name=$user_name&list_id=$list_id'>$i</a></li>";
                 }
 
                 if ($page == $numPages)
@@ -157,7 +159,7 @@
                 else
                 {
                     $nextPage = $page+1;
-                    echo "<li><a href='./list.php?page=$nextPage'>Next</a></li>";
+                    echo "<li><a href='./addConcertToList.php?page=$nextPage&user_name=$user_name&list_id=$list_id'>Next</a></li>";
                 }
 
                 ?>
