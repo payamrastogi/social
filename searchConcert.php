@@ -38,7 +38,7 @@
 				$sel_criteria = $_GET['sel_criteria'];
 				$user_name = $_SESSION['sess_user_name'];
 				$queryBand = $dbo->getBandId($band_name);
-				$row_band = $query1->fetch(PDO::FETCH_ASSOC);
+				$row_band = $queryBand->fetch(PDO::FETCH_ASSOC);
 				$band_id = $row_band['band_id'];
 				header('Location: ./searchConcertResultBand.php?user_name='.$user_name.'&band_id='.$band_id.'&sel_criteria='.$sel_criteria);
 			}

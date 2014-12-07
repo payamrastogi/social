@@ -5,7 +5,7 @@
 
    $pdo = new db();
    $errorMessage = '';
-   if (isset($_POST['btn_submit']))
+   if (isset($_POST['btn_submit']) && isset($_POST['rd_user_type']))
    {
 		if($_POST['rd_user_type']=='user')
 		{
@@ -116,8 +116,8 @@
       </ul>
       <form class="form-signin" action="" method="post">
         <h2 class="form-signin-heading">Sign In</h2>
-        <input type="text" class="input-block-level" placeholder="Username" name="txt_user_name">
-        <input type="password" class="input-block-level" placeholder="Password" name="pass_user_password">
+        <input type="text" class="input-block-level" placeholder="Username" name="txt_user_name" required>
+        <input type="password" class="input-block-level" placeholder="Password" name="pass_user_password" required>
 		<input type="radio" class="input-block-level"  id="rd_user" name="rd_user_type" value="user">User
 		<input type="radio" class="input-block-level"  id="rd_band" name="rd_user_type" value="band">Band
         <center>

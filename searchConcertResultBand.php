@@ -6,19 +6,17 @@
 	$successMessage = '';
 	$check =0;
 	$queryAll ='';
-	if(isset($_GET['genre_name']))
+	if(isset($_GET['band_id']))
 	{
 		$check =1;
 		//echo "hello";
-		if($_GET['sel_criteria']==0)
+		if($_GET['sel_criteria']==2)
 		{
 			//echo "123"; 
-			$genre_name = $_GET['genre_name'];
+			$band_id = $_GET['band_id'];
 			$sel_criteria = $_GET['sel_criteria'];
-			$queryGenreId = $dbo->getGenreId($genre_name);
-			$row_genreid = $queryGenreId->fetch(PDO::FETCH_ASSOC);
-			$genre_id = $row_genreid['genre_id'];
-			$queryAll = $dbo->getGenreConcerts($genre_id, -1, -1); //Used for counting rows
+		
+			
 			//header('Location: ./searchConcertResult.php?user_name='.$user_name.'&genre_name='.$genre_name);
 		}
 		$successMessage = $successMessage;
@@ -43,7 +41,7 @@
     }
     
 	//echo "hello".$queryAll;
-	
+	$queryAll = $dbo->getBandConcert($band_id, -1, -1); //Used for counting rows
     $numResults = $queryAll->rowCount();
 	//echo "2".$user_id;
 	//echo "1".$numResults;
@@ -57,7 +55,7 @@
 
     $startFrom = ($page - 1) * $resultsPerPage;
 
-    $query = $dbo->getGenreConcerts($genre_id, $startFrom, $resultsPerPage);
+    $query = $dbo->getBandConcert($band_id, $startFrom, $resultsPerPage);
  ?>
 
 <!DOCTYPE html>
@@ -166,7 +164,7 @@
                 else
                 {
                     $previousPage = $page - 1;
-                    echo "<li><a href='./searchConcertResult.php?page=$previousPage&genre_name=$genre_name&sel_criteria=$sel_criteria'>Prev</a></li>";
+                    echo "<li><a href='./searchConcertResultBand.php?page=$previousPage&band_id=$band_id&sel_criteria=$sel_criteria'>Prev</a></li>";
                 }
 
 
@@ -175,7 +173,7 @@
                     $theClass = '';
                     if($i == $page)
                         $theClass = 'active';
-                    echo "<li class='$theClass'><a href='./searchConcertResult.php?page=$i&genre_name=$genre_name&sel_criteria=$sel_criteria'>$i</a></li>";
+                    echo "<li class='$theClass'><a href='./searchConcertResultBand.php?page=$i&band_id=$band_id&sel_criteria=$sel_criteria'>$i</a></li>";
                 }
 
                 if ($page == $numPages)
@@ -183,7 +181,7 @@
                 else
                 {
                     $nextPage = $page+1;
-                    echo "<li><a href='./searchConcertResult.php?page=$nextPage&genre_name=$genre_name&sel_criteria=$sel_criteria'>Next</a></li>";
+                    echo "<li><a href='./searchConcertResultBand.php?page=$nextPage&band_id=$band_id&sel_criteria=$sel_criteria'>Next</a></li>";
                 }
 
                 ?>

@@ -9,7 +9,7 @@
 		$fan_band_id = $_GET['fan_band_id'];
 		$user_id = $_SESSION['sess_user_id'];
 		$fan_band_name = $_GET['fan_band_name'];
-		$queryUnfollow = $dbo->becomeFanOf($fan_band_id, $user_id);
+		$queryfollow = $dbo->becomeFanOf($user_id, $fan_band_id);
 		$successMessage = $successMessage . '- You have become fan of '.$fan_band_name;
 	}
     if (isset($_GET['searchBandName']))

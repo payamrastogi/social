@@ -49,6 +49,14 @@
                 return false;
         }
 		
+		 public function doLogout($user_id)
+        {
+			echo "yry";
+            $queryString ="Update users set user_laccess = now() where user_id='$user_id'";
+            $query = $this->pdo->query($queryString);
+            return $query;
+        }
+		
         public function close()
         {
             $link =null;
@@ -265,7 +273,70 @@
 			$query = $this->pdo->query($queryString);
 			return $query;
 		}
+		public function getBandConcert($band_id,$start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select c.concert_id, c.concert_name, c.concert_sdate, c.concert_description
+							from concerts c, performing p
+							where p.band_id = '$band_id'
+							and c.concert_id = p.concert_id";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
 		
+		public function getConcertIdName($concert_name,$start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+			//echo "Hello";
+            //base search:
+            $queryString = "select concert_id 
+							from concerts
+							where concert_name like '%$concert_name%'";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
 		public function getPerformingBands($concert_id)
 		{
 			$queryString = "select b.band_name, b.band_id
@@ -395,6 +466,36 @@
 
             //base search:
             $queryString = "select * from concerts where datediff(concert_sdate, date(now())) between 0 and 30";
+			
+            if ($goFor != -1 && $start == -1)
+				$queryString = $queryString .  " LIMIT 0, $goFor";
+
+            elseif ($start != -1 && $goFor == -1)
+				$queryString = $queryString .  " LIMIT $start, 2372662636281763";
+
+            elseif($start != -1 && $goFor != -1)
+                $queryString = $queryString .  " LIMIT $start, $goFor";
+
+            $query = $this->pdo->query($queryString);
+			//echo $query;
+            return $query;
+		}
+		
+		public function getUpcomingConcertRecently($user_id, $start, $goFor)
+		{
+			   /**
+            *   $start:
+            *       the start of the LIMIT. Expects -1 if no LIMIT
+            *   $goFor:
+            *       the end of the LIMIT. Expects -1 if no LIMIT
+            */
+
+            //TODO: better search
+            $start = (int)$start;
+            $goFor = (int)$goFor;
+
+            //base search:
+            $queryString = "select * from users, concerts where concert_atime > user_laccess and user_id = '$user_id'";
 			
             if ($goFor != -1 && $start == -1)
 				$queryString = $queryString .  " LIMIT 0, $goFor";
@@ -760,7 +861,8 @@
 		
 		public function becomeFanOf($user_id, $band_id)
 		{
-			$queryString = "Insert into fanof (user_id, band_id) values ($user_id, $band_id)";
+			//echo "ljSKD";
+			$queryString = "Insert into fanof (user_id, band_id) values ('$user_id', '$band_id')";
 			$query = $this->pdo->query($queryString);
 			return $query;
 		}
