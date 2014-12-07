@@ -1072,7 +1072,7 @@
 		
 		public function deleteBandGenres($band_id)
         {
-            $queryString = "delete FROM band_genres WHERE band_id = $band_id";
+            $queryString = "delete FROM bandgenres WHERE band_id = $band_id";
             $query = $this->pdo->query($queryString);
         }
 		
@@ -1261,6 +1261,39 @@
 			}
 			return $queryString;
 		}
+		
+		public function deleteUserGenres($user_id)
+        {
+			try
+			{
+				$query = "delete FROM usergenres WHERE user_id = :user_id";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
+        }
+		
+		public function insertUserGenres($genre_id, $user_id)
+        {
+			try
+			{
+				$query = "insert into usergenres (genre_id, user_id) values (:genre_id, :user_id);";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':genre_id',$genre_id, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
+        }
     }
 ?>
 

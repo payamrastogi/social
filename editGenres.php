@@ -5,10 +5,25 @@
 	require_once("./source/activecalendar.php");
     $dbo = new db();
 	$redirected = '';
-	if(isset($_POST['btn_edit_genres']))
+	if(isset($_POST['btn_submit']) && isset($_POST['sel_genres']))
 	{
+		$user_id = $_SESSION['sess_user_id'];
 		$user_name = $_SESSION['sess_user_name'];
-		header('Location: ./editGenres.php?user_name='.$user_name);
+		$sel_genres = $_POST['sel_genres'];
+		if(is_array($sel_genres))
+		{
+			$dbo->deleteUserGenres($user_id);
+			foreach($sel_genres as $genre_id)
+			{
+				//echo "1231";
+				$dbo->insertUserGenres($genre_id, $user_id);
+			}
+		}
+		header('Location: ./profile.php?user_name='.$user_name);
+	}
+	if(isset($_POST['btn_cancel']))
+	{
+		header('Location: ./profile.php?user_name='.$user_name);
 	}
 
     if (!isset($_GET['user_name']))
@@ -89,51 +104,34 @@
 				<div class="thumbnail">
 					<!--<img data-src="holder.js/300x300" alt="...">-->
 					<div class="caption">
-						<p>Genres you like
-						<?php 
-								$query1 = $dbo->getUserGenres($user_id);
-								while($row_usergenres = $query1->fetch(PDO::FETCH_ASSOC))
-								{ ?>
-									<ul>
-										<li>
-											<?php echo $row_usergenres['genre_name']; ?>
-										</li>
-									</ul>
-							<?php   } ?>
-							<form method="post" action="">
-								<input type="hidden" id="hid_user_id" name="hid_user_id" value="<?php echo $user_id; ?>" />
-								<button type="submit" class="btn btn-primary" name="btn_edit_genres" id="btn_edit_genres">Edit Genres</button>
-							</form>
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-6 col-md-4">
-				<div class="thumbnail">
-					<!--<img data-src="holder.js/300x300" alt="...">-->
-					<div class="caption">
-						
-					</div>
-				</div>
-			</div>
-			<div class="col-sm-6 col-md-4">
-				<!--<div class="thumbnail">-->
-					<div class="row-fluid" style="margin-top: 0px;">
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h3 class="panel-title">
-									
-								</h3>
+						<form method="POST" action="">
+							<div class="input-group">
+							<label for="sel_genres">Genre</label>
+							<select name="sel_genres[]" multiple class="form-control" size="15">
+							 <?php
+								$query = $dbo->getParentGenre();
+								while($row_genres = $query->fetch(PDO::FETCH_ASSOC))
+								{?> 
+							  <option value="<?php echo $row_genres['p_genre_id'];?>"><?php echo $row_genres['p_genre_name'];?></option>
+							<?php
+									$query5 = $dbo->getSubGenre($row_genres['p_genre_id']);
+									while($row_genres = $query5->fetch(PDO::FETCH_ASSOC))
+									{?>
+									<option value="<?php echo $row_genres['s_genre_id'];?>"><?php echo $row_genres['s_genre_name'];?></option>
+									<?php }
+								}
+							?>
+							</select>
 							</div>
-							<div class="panel-body">
-								<div class="col-lg-3">
-									
-								</div><!-- /.col-lg-3 -->
-							</div><!-- panel-body -->
-						</div><!-- Panel Profile Details -->
+							<br/>
+							<div class="input-group">
+								<button type="submit" class="btn btn-primary btn-large" name="btn_submit">Submit</button>&nbsp;
+								<button type="submit" class="btn btn-primary btn-large" name="btn_cancel">Cancel</button>
+							</div>
+						</form>
 					</div>
-				<!--</div>-->
-			</div><!-- / row-fluid -->
+				</div>
+			</div>
 		</div>
 	</div>
     <?php include 'footer.php'; ?>

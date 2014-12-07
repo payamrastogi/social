@@ -6,7 +6,6 @@
 	$successMessage = '';
 	if(isset($_POST['txt_list_name']) && isset($_POST['sel_genres']))
 	{
-		echo "hekkio";
 		$list_name = $_POST['txt_list_name'];
 		$user_id = $_SESSION['sess_user_id'];
 		$user_name = $_SESSION['sess_user_name'];
