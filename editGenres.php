@@ -19,11 +19,11 @@
 				$dbo->insertUserGenres($genre_id, $user_id);
 			}
 		}
-		header('Location: ./profile.php?user_name='.$user_name);
+		header('Location: ./userprofile.php');
 	}
 	if(isset($_POST['btn_cancel']))
 	{
-		header('Location: ./profile.php?user_name='.$user_name);
+		header('Location: ./userprofile.php');
 	}
 
     if (!isset($_GET['user_name']))
@@ -82,7 +82,7 @@
 				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
 			</li>
 			<li class="active">
-				<a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
+				<a href="userprofile.php">Profile</a>
 			</li>
 			<li class=""><a href="friends.php">Following</a></li>
 			<li class=""><a href="fanof.php">Fan of</a></li>
