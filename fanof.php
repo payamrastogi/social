@@ -65,7 +65,7 @@
 				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
 			</li>
 				<li>
-					<a href="userprofile.php?user_name=<?php echo $user_name; ?>">Profile</a>
+					<a href="userprofile.php">Profile</a>
 				</li>
 				<li class=""><a href="friends.php">Following</a></li>
 				<li class="active"><a href="fanof.php">Fan of</a></li>
