@@ -11,7 +11,7 @@
 		$check =1;
 
 		//echo "123"; 
-		$user_name = $_GET['user_name'];
+		$user_name = $_SESSION['sess_user_name'];
 		$list_id = $_GET['list_id'];
 
 		$successMessage = $successMessage;
@@ -21,14 +21,14 @@
 		$check =1;
 
 		//echo "123"; 
-		$user_name = $_GET['user_name'];
+		$user_name = $_SESSION['sess_user_name'];
 		$list_id = $_GET['add_list_id'];
 		$concert_id = $_GET['concert_id'];
 		$dbo->addConcertToList($list_id,$concert_id);
 		$successMessage = $successMessage."Concert Added to List";
 	}
 	
-	if (!isset($_GET['user_name']))
+	if (!isset($_SESSION['sess_user_name']))
     {
         if (! isset($_SESSION['sess_user_name']))
         {
@@ -42,7 +42,7 @@
     }
     else
     {
-        $user_name = $_GET['user_name'];
+        $user_name = $_SESSION['sess_user_name'];
 		$user_id = $_SESSION['sess_user_id'];
     }
     
@@ -77,15 +77,15 @@
 		<div class="container" style="position: relative; top: 40px;">
 			<ul class="nav nav-tabs">
 				<li class="">
-				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
+				<a href="home.php">Home</a>
 			</li>
 				<li>
-					<a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
+					<a href="userprofile.php">Profile</a>
 				</li>
 				<li class=""><a href="friends.php">Following</a></li>
 				<li class=""><a href="fanof.php">Fan of</a></li>
-				<li class="active"><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
-				<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
+				<li class="active"><a href="list.php">My list</a></li>
+				<li class=""><a href="searchConcert.php">Concerts</a></li>
 			</ul>
 			<div class="container" style="position: relative; top: 10px;">
 				<form class="navbar-form navbar-left" role="search" action="searchConcert.php" method="get">
@@ -142,7 +142,7 @@
                 else
                 {
                     $previousPage = $page - 1;
-                    echo "<li><a href='./addConcertToList.php?page=$previousPage&user_name=$user_name&list_id=$list_id'>Prev</a></li>";
+                    echo "<li><a href='./addConcertToList.php?page=$previousPage&list_id=$list_id'>Prev</a></li>";
                 }
 
 
@@ -151,7 +151,7 @@
                     $theClass = '';
                     if($i == $page)
                         $theClass = 'active';
-                    echo "<li class='$theClass'><a href='./addConcertToList.php?page=$i&user_name=$user_name&list_id=$list_id'>$i</a></li>";
+                    echo "<li class='$theClass'><a href='./addConcertToList.php?page=$i&list_id=$list_id'>$i</a></li>";
                 }
 
                 if ($page == $numPages)
@@ -159,7 +159,7 @@
                 else
                 {
                     $nextPage = $page+1;
-                    echo "<li><a href='./addConcertToList.php?page=$nextPage&user_name=$user_name&list_id=$list_id'>Next</a></li>";
+                    echo "<li><a href='./addConcertToList.php?page=$nextPage&list_id=$list_id'>Next</a></li>";
                 }
 
                 ?>

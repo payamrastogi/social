@@ -12,7 +12,7 @@
 
 		//echo "123"; 
 		$sel_criteria = $_GET['sel_criteria'];
-		$user_name = $_GET['user_name'];
+		$user_name = $_SESSION['sess_user_name'];
 		$queryuserId = $dbo->getUserId($user_name);
 		$row_userid = $queryuserId->fetch(PDO::FETCH_ASSOC);
 		$user_id = $row_userid['user_id'];
@@ -20,7 +20,7 @@
 		$successMessage = $successMessage;
 	}
 	
-	if (!isset($_GET['user_name']))
+	if (!isset($_SESSION['sess_user_name']))
     {
         if (! isset($_SESSION['sess_user_name']))
         {
@@ -34,7 +34,7 @@
     }
     else
     {
-        $user_name = $_GET['user_name'];
+        $user_name = $_SESSION['sess_user_name'];
 		$user_id = $_SESSION['sess_user_id'];
     }
     
@@ -69,15 +69,15 @@
 		<div class="container" style="position: relative; top: 40px;">
 			<ul class="nav nav-tabs">
 				<li class="">
-				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
+				<a href="home.php">Home</a>
 			</li>
 				<li>
 					<a href="userprofile.php">Profile</a>
 				</li>
 				<li class=""><a href="friends.php">Following</a></li>
 				<li class=""><a href="fanof.php">Fan of</a></li>
-				<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
-				<li class="active"><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
+				<li class=""><a href="list.php">My list</a></li>
+				<li class="active"><a href="searchConcert.php">Concerts</a></li>
 				<?php if($_SESSION['sess_user_repo'] > 12)
 					{?>
 						<li class=""><a href="addConcertUser.php">Add Concerts</a></li>
@@ -165,7 +165,7 @@
                 else
                 {
                     $previousPage = $page - 1;
-                    echo "<li><a href='./searchConcertResultRecently.php?page=$previousPage&user_name=$user_name&sel_criteria=$sel_criteria'>Prev</a></li>";
+                    echo "<li><a href='./searchConcertResultRecently.php?page=$previousPage&sel_criteria=$sel_criteria'>Prev</a></li>";
                 }
 
 
@@ -174,7 +174,7 @@
                     $theClass = '';
                     if($i == $page)
                         $theClass = 'active';
-                    echo "<li class='$theClass'><a href='./searchConcertResultRecently.php?page=$i&user_name=$user_name&sel_criteria=$sel_criteria'>$i</a></li>";
+                    echo "<li class='$theClass'><a href='./searchConcertResultRecently.php?page=$i&sel_criteria=$sel_criteria'>$i</a></li>";
                 }
 
                 if ($page == $numPages)
@@ -182,7 +182,7 @@
                 else
                 {
                     $nextPage = $page+1;
-                    echo "<li><a href='./searchConcertResultRecently.php?page=$nextPage&user_name=$user_name&sel_criteria=$sel_criteria'>Next</a></li>";
+                    echo "<li><a href='./searchConcertResultRecently.php?page=$nextPage&sel_criteria=$sel_criteria'>Next</a></li>";
                 }
 
                 ?>

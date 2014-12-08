@@ -13,7 +13,7 @@
 		$successMessage = $successMessage . '- Unfollow '.$unfan_band_name;
 	}
 	
-	if (!isset($_GET['user_name']))
+	if (!isset($_SESSION['sess_user_name']))
     {
         if (! isset($_SESSION['sess_user_name']))
         {
@@ -27,7 +27,7 @@
     }
     else
     {
-        $user_name = $_GET['user_name'];
+        $user_name = $_SESSION['sess_user_name'];
 		$user_id = $_SESSION['sess_user_id'];
     }
     $queryAll = $dbo->getFanOf($user_id, -1, -1); //Used for counting rows
@@ -69,8 +69,8 @@
 				</li>
 				<li class=""><a href="friends.php">Following</a></li>
 				<li class="active"><a href="fanof.php">Fan of</a></li>
-				<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
-				<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
+				<li class=""><a href="list.php">My list</a></li>
+				<li class=""><a href="searchConcert.php">Concerts</a></li>
 				<?php if($_SESSION['sess_user_repo'] > 12)
 					{?>
 						<li class=""><a href="addConcertUser.php">Add Concerts</a></li>

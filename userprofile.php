@@ -8,7 +8,7 @@
 	if(isset($_POST['btn_edit_genres']))
 	{
 		$user_name = $_SESSION['sess_user_name'];
-		header('Location: ./editGenres.php?user_name='.$user_name);
+		header('Location: ./editGenres.php');
 	}
 
     if (!isset($_SESSION['sess_user_name']))
@@ -80,15 +80,15 @@
     <div class="container" style="position: relative; top: 0px;">
 		<ul class="nav nav-tabs">
 			<li class="">
-				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
+				<a href="home.php">Home</a>
 			</li>
 			<li class="active">
 				<a href="userprofile.php">Profile</a>
 			</li>
 			<li class=""><a href="friends.php">Following</a></li>
 			<li class=""><a href="fanof.php">Fan of</a></li>
-			<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
-			<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
+			<li class=""><a href="list.php">My list</a></li>
+			<li class=""><a href="searchConcert.php">Concerts</a></li>
 			<?php if($_SESSION['sess_user_repo'] > 12)
 			{?>
 				<li class=""><a href="addConcertUser.php">Add Concerts</a></li>

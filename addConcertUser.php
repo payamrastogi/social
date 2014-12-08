@@ -204,8 +204,8 @@
 			</li>
 			<li class=""><a href="friends.php">Following</a></li>
 			<li class=""><a href="fanof.php">Fan of</a></li>
-			<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
-			<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
+			<li class=""><a href="list.php">My list</a></li>
+			<li class=""><a href="searchConcert.php">Concerts</a></li>
 			<?php if($_SESSION['sess_user_repo'] > 12)
 			{?>
 			<li class="active"><a href="addConcert.php">Add Concerts</a></li>

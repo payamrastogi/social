@@ -15,7 +15,7 @@
 				$genre_name = $_GET['searchConcert'];
 				$sel_criteria = $_GET['sel_criteria'];
 				$user_name = $_SESSION['sess_user_name'];
-				header('Location: ./searchConcertResult.php?user_name='.$user_name.'&genre_name='.$genre_name.'&sel_criteria='.$sel_criteria);
+				header('Location: ./searchConcertResult.php?&genre_name='.$genre_name.'&sel_criteria='.$sel_criteria);
 			}
 			$successMessage = $successMessage;
 		}
@@ -26,7 +26,7 @@
 				$concert_name = $_GET['searchConcert'];
 				$sel_criteria = $_GET['sel_criteria'];
 				$user_name = $_SESSION['sess_user_name'];
-				header('Location: ./searchConcertResultName.php?user_name='.$user_name.'&concert_name='.$concert_name.'&sel_criteria='.$sel_criteria);
+				header('Location: ./searchConcertResultName.php?&concert_name='.$concert_name.'&sel_criteria='.$sel_criteria);
 			}
 			$successMessage = $successMessage;
 		}
@@ -40,7 +40,7 @@
 				$queryBand = $dbo->getBandId($band_name);
 				$row_band = $queryBand->fetch(PDO::FETCH_ASSOC);
 				$band_id = $row_band['band_id'];
-				header('Location: ./searchConcertResultBand.php?user_name='.$user_name.'&band_id='.$band_id.'&sel_criteria='.$sel_criteria);
+				header('Location: ./searchConcertResultBand.php?band_id='.$band_id.'&sel_criteria='.$sel_criteria);
 			}
 			$successMessage = $successMessage;
 		}
@@ -48,41 +48,41 @@
 		{
 			$sel_criteria = $_GET['sel_criteria'];
 			$user_name = $_SESSION['sess_user_name'];
-			header('Location: ./searchConcertResultUpcoming.php?user_name='.$user_name.'&sel_criteria='.$sel_criteria);
+			header('Location: ./searchConcertResultUpcoming.php?&sel_criteria='.$sel_criteria);
 		}
 		if(isset($_GET['sel_criteria']) && $_GET['sel_criteria']==4)
 		{
 			$sel_criteria = $_GET['sel_criteria'];
 			$user_name = $_SESSION['sess_user_name'];
-			header('Location: ./searchConcertResultUpcomingWeek.php?user_name='.$user_name.'&sel_criteria='.$sel_criteria);
+			header('Location: ./searchConcertResultUpcomingWeek.php?&sel_criteria='.$sel_criteria);
 		}
 		if(isset($_GET['sel_criteria']) && $_GET['sel_criteria']==5)
 		{
 			$sel_criteria = $_GET['sel_criteria'];
 			$user_name = $_SESSION['sess_user_name'];
-			header('Location: ./searchConcertResultUpcomingMonth.php?user_name='.$user_name.'&sel_criteria='.$sel_criteria);
+			header('Location: ./searchConcertResultUpcomingMonth.php?&sel_criteria='.$sel_criteria);
 		}
 		if(isset($_GET['sel_criteria']) && $_GET['sel_criteria']==6)
 		{
 			$sel_criteria = $_GET['sel_criteria'];
 			$user_name = $_SESSION['sess_user_name'];
-			header('Location: ./searchConcertResultRecently.php?user_name='.$user_name.'&sel_criteria='.$sel_criteria);
+			header('Location: ./searchConcertResultRecently.php?&sel_criteria='.$sel_criteria);
 		}
 		if(isset($_GET['sel_criteria']) && $_GET['sel_criteria']==7)
 		{
 			$sel_criteria = $_GET['sel_criteria'];
 			$user_name = $_SESSION['sess_user_name'];
-			header('Location: ./searchConcertResultPast.php?user_name='.$user_name.'&sel_criteria='.$sel_criteria);
+			header('Location: ./searchConcertResultPast.php?&sel_criteria='.$sel_criteria);
 		}
 		if(isset($_GET['sel_criteria']) && $_GET['sel_criteria']==8)
 		{
 			$sel_criteria = $_GET['sel_criteria'];
 			$user_name = $_SESSION['sess_user_name'];
-			header('Location: ./searchConcertResultAll.php?user_name='.$user_name.'&sel_criteria='.$sel_criteria);
+			header('Location: ./searchConcertResultAll.php?&sel_criteria='.$sel_criteria);
 		}
 	}
 	
-	if (!isset($_GET['user_name']))
+	if (!isset($_SESSION['sess_user_name']))
     {
         if (! isset($_SESSION['sess_user_name']))
         {
@@ -96,7 +96,7 @@
     }
     else
     {
-        $user_name = $_GET['user_name'];
+        $user_name = $_SESSION['sess_user_name'];
 		$user_id = $_SESSION['sess_user_id'];
     }
     $queryAll = $dbo->getUserConcerts($user_id, -1, -1); //Used for counting rows
@@ -131,15 +131,15 @@
 		<div class="container" style="position: relative; top: 40px;">
 			<ul class="nav nav-tabs">
 				<li class="">
-				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
+				<a href="home.php">Home</a>
 			</li>
 				<li>
 					<a href="userprofile.php">Profile</a>
 				</li>
 				<li class=""><a href="friends.php">Following</a></li>
 				<li class=""><a href="fanof.php">Fan of</a></li>
-				<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
-				<li class="active"><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
+				<li class=""><a href="list.php">My list</a></li>
+				<li class="active"><a href="searchConcert.php">Concerts</a></li>
 				<?php if($_SESSION['sess_user_repo'] > 12)
 					{?>
 						<li class=""><a href="addConcertUser.php">Add Concerts</a></li>

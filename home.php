@@ -6,7 +6,7 @@
     $dbo = new db();
 	$redirected = '';
 
-    if (!isset($_GET['user_name']))
+    if (!isset($_SESSION['sess_user_name']))
     {
         if (!isset($_SESSION['sess_user_name']))
         {
@@ -23,7 +23,7 @@
     }
     else
     {
-        $user_name = $_GET['user_name'];
+        $user_name = $_SESSION['sess_user_name'];
 		$user_id = $_SESSION['sess_user_id'];
 		if(isset($_GET['redirected']))
 		{
@@ -59,10 +59,10 @@
     <div class="container" style="position: relative; top: 0px;">
 		<ul class="nav nav-tabs">
 			<li class="active">
-				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
+				<a href="home.php">Home</a>
 			</li>
 			<li>
-				<a href="userprofile.php?user_name=<?php echo $user_name; ?>">Profile</a>
+				<a href="userprofile.php">Profile</a>
 			</li>
 			<li class=""><a href="friends.php">Following</a></li>
 			<li class=""><a href="fanof.php">Fan of</a></li>
