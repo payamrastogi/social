@@ -612,7 +612,7 @@
 		
 		public function updateReview($user_id, $concert_id, $review)
 		{
-			$queryString ="SELECT * FROM plans WHERE user_id = '$user_id' and  concert_id='$concert_id'";
+			$queryString ="SELECT * FROM plans WHERE user_id = '$user_id' and  concert_id='$concert_id';";
             $query = $this->pdo->query($queryString);
 
             if($query->rowCount() > 0)

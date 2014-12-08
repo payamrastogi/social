@@ -13,9 +13,13 @@
 	
 	if (isset($_POST['txt_review']) && $_POST['txt_review'] != '')
 	{
+		//echo "gsdgfas";
 		$review = $_POST['txt_review'];
+		//echo $review;
 		$user_id = $_SESSION['sess_user_id'];
+		//echo $user_id;
 		$concert_id = $_POST['hid_concert_id'];
+		//echo $concert_id;
         $dbo->updateReview($user_id, $concert_id, $review);
         $successMessage = $successMessage . '- Review saved ' ;
 	}
