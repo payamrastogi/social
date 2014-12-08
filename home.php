@@ -62,7 +62,7 @@
 				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
 			</li>
 			<li>
-				<a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
+				<a href="userprofile.php?user_name=<?php echo $user_name; ?>">Profile</a>
 			</li>
 			<li class=""><a href="friends.php">Following</a></li>
 			<li class=""><a href="fanof.php">Fan of</a></li>
@@ -177,6 +177,28 @@
 					</div>
 				<!--</div>-->
 			</div><!-- / row-fluid -->
+			<div class="col-sm-6 col-md-4">
+				<div class="thumbnail">
+					<!--<img data-src="holder.js/300x300" alt="...">-->
+					<div class="caption">
+						<h3>Suggestions</h3>
+						<?php 
+							$query3 = $dbo->getFollowSuggestions($user_id);
+							while ($row_follow = $query3->fetch(PDO::FETCH_ASSOC))
+							{	
+								$querydetails = $dbo->getUserDetails($row_follow['user_id']);
+								$row_userdetails = $querydetails->fetch(PDO::FETCH_ASSOC);
+								?> 
+								<p>
+								<a href="./profile.php?user_name=<?php echo $row_userdetails['user_name']?>&redirected=true">
+													<span class="glyphicon glyphicon-headphones" aria-hidden="true"></span>
+													<?php echo $row_userdetails['user_fname']." ".$row_userdetails['user_lname']; ?>	
+												</a>
+												</p>
+					<?php		} ?>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
     <?php include 'footer.php'; ?>

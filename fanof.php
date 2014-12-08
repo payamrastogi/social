@@ -65,7 +65,7 @@
 				<a href="home.php?user_name=<?php echo $user_name; ?>">Home</a>
 			</li>
 				<li>
-					<a href="profile.php?user_name=<?php echo $user_name; ?>">Profile</a>
+					<a href="userprofile.php?user_name=<?php echo $user_name; ?>">Profile</a>
 				</li>
 				<li class=""><a href="friends.php">Following</a></li>
 				<li class="active"><a href="fanof.php">Fan of</a></li>
@@ -73,7 +73,7 @@
 				<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
 				<?php if($_SESSION['sess_user_repo'] > 12)
 					{?>
-						<li class=""><a href="addConcert.php">Add Concerts</a></li>
+						<li class=""><a href="addConcertUser.php">Add Concerts</a></li>
 				<?php } ?>
 			</ul>
 			<div class="container" style="position: relative; top: 10px;">

@@ -80,6 +80,10 @@
 				<li class=""><a href="fanof.php">Fan of</a></li>
 				<li class=""><a href="list.php?user_name=<?php echo $user_name; ?>">My list</a></li>
 				<li class="active"><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
+				<?php if($_SESSION['sess_user_repo'] > 12)
+					{?>
+						<li class=""><a href="addConcertUser.php">Add Concerts</a></li>
+				<?php } ?>
 			</ul>
 			<div class="container" style="position: relative; top: 10px;">
 				<form class="navbar-form navbar-left" role="search" action="searchConcert.php" method="get">
@@ -101,7 +105,7 @@
 								if((isset($_GET['sel_criteria']) && ($_GET['sel_criteria'] == 0 || $_GET['sel_criteria'] == 1 || $_GET['sel_criteria'] == 2)) || $check==0) 
 								{ ?>
 									<div class="form-group">
-										<input type="text" class="form-control" placeholder="Search" name="searchConcert">
+										<input type="text" class="form-control" placeholder="Search" name="searchConcert" required>
 									</div>
 								<?php	}?>
 				</form>

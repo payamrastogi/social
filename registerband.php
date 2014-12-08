@@ -51,9 +51,10 @@
 				if(isset($band_id))
 				{
 					$_SESSION['sess_band_name'] = $band_name;
-					$_SESSION['sess_band_user_name'] = $band_user_password;
+					$_SESSION['sess_band_user_name'] = $band_user_name;
 					$_SESSION['sess_band_id'] = $band_id;
 					$_SESSION['sess_band_num_members']=$band_num_members;
+					$_SESSION['sess_user_type']='band';
 					//echo $user_id;
 					header('Location: ./genre.php');
 				}
@@ -137,7 +138,7 @@
           <a href="login.php">Login</a>
         </li>
         <li class="" ><a href="register.php">Register</a></li>
-		<li class="active" ><a href="register.php">Register Band</a></li>
+		<li class="active" ><a href="registerband.php">Register Band</a></li>
       </ul>
       <form class="form-register" action="" method="post">
         <h2 class="form-register-heading">Register</h2>

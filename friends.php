@@ -73,7 +73,7 @@
 				<li class=""><a href="searchConcert.php?user_name=<?php echo $user_name; ?>">Concerts</a></li>
 				<?php if($_SESSION['sess_user_repo'] > 12)
 					{?>
-						<li class=""><a href="addConcert.php">Add Concerts</a></li>
+						<li class=""><a href="addConcertUser.php">Add Concerts</a></li>
 				<?php } ?>
 			</ul>
 			<?php

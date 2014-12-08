@@ -208,7 +208,7 @@
 												union 
 												SELECT u1.user_id, u1.user_name, u2.user_fname, u2.user_lname FROM users u1, userdetails u2
 												WHERE u1.user_id = u2.user_id
-												and u2.user_lname LIKE '%$searchBandMember%';";
+												and u2.user_lname LIKE '%$searchBandMember%'";
 
             if ($goFor != -1 && $start == -1)
 				$queryString = $queryString .  " LIMIT 0, $goFor";
@@ -901,18 +901,14 @@
 
         public function updateProfileInfo($user_id, $newValue, $type)
         {
-            /**
-            *   $type:
-            *       the field to updateProfileInfo
-            */
 			$tableName ="";
-            $detailFields = array('user_desc', 'user_gender', 'user_fname', 'user_lname', 'user_city','user_state','user_country','user_zipcode', 'user_dob');
+            $detailFields = array('user_description', 'user_gender', 'user_fname', 'user_lname', 'user_city','user_state','user_country','user_zipcode', 'user_dob','user_street', 'user_email');
             $userFields = array('user_password');
             if (in_array($type, $detailFields))
                 $tableName = "userdetails";
             elseif (in_array($type, $userFields))
                 $tableName = "users";
-            $queryString = "UPDATE".$tableName." SET $type='$newValue' WHERE user_id='$user_id'";
+            $queryString = "UPDATE ".$tableName." SET $type='$newValue' WHERE user_id='$user_id'";
 
             $query = $this->pdo->query($queryString);
         }
@@ -1285,6 +1281,22 @@
 				$query = "insert into usergenres (genre_id, user_id) values (:genre_id, :user_id);";
 				$queryString = $this->pdo->prepare($query);
 				$queryString->bindParam(':genre_id',$genre_id, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
+        }
+		
+		public function getFollowSuggestions($user_id)
+        {
+			try
+			{
+				$query = "select distinct u2.user_id from usergenres u1, usergenres u2 where u1.user_id = :user_id and u1.user_id <> u2.user_id and u2.genre_id in (select genre_id from usergenres where user_id=:user_id) and u2.user_id not in (select followed_uid from follows where following_uid=:user_id) group by u2.user_id;";
+				$queryString = $this->pdo->prepare($query);
 				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
 				$queryString->execute();
 			}

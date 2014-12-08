@@ -8,7 +8,7 @@
 	
 	if (!isset($_SESSION['sess_band_user_name']))
     {
-        if (! isset($_SESSION['sess_band_user_name']))
+        if (!isset($_SESSION['sess_band_user_name']))
         {
             header('Location: ./logout.php');
         }

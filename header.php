@@ -48,7 +48,7 @@ function curPageName() {
                         <li class="active"><a href="contact.php">Contact Us</a></li>';
                         }
                         else{
-                        echo'<li class=""><a href="index.php">Home</a></li>
+                        echo'<li class=""><a href="logout.php">Home</a></li>
                         <li class=""><a href="contact.php">Contact Us</a></li>';
                         }
                         if (isset($_SESSION['sess_user_type'])) {

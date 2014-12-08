@@ -66,7 +66,7 @@
 			<div class="container" style="position: relative; top: 10px;">
 				<form class="navbar-form navbar-left" role="search" action="memberSearch.php" method="get">
 						<div class="form-group">
-							<input type="text" class="form-control" placeholder="Search member" name="searchBandMember">
+							<input type="text" class="form-control" placeholder="Search member" name="searchBandMember" required>
 						</div>
 				</form>
 			</div>

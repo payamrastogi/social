@@ -12,7 +12,7 @@
     $successMessage = '';
     $errorMessage = '';
 
-    if (isset($_POST['about']) && $_POST['about'] != '')
+    if (isset($_POST['user_description']) && $_POST['user_description'] != '')
     {
         $about = $_POST['user_description'];
         $dbo->updateProfileInfo($user_id, $about, 'user_description');
@@ -41,6 +41,30 @@
         $user_street = $_POST['txt_user_street'];
         $dbo->updateProfileInfo($user_id, $user_street, 'user_street');
         $successMessage = $successMessage . '- Updated Street ';
+    }
+	if (isset($_POST['txt_user_city']) && $_POST['txt_user_city'] != '')
+    {
+        $user_city = $_POST['txt_user_city'];
+        $dbo->updateProfileInfo($user_id, $user_city, 'user_city');
+        $successMessage = $successMessage . '- Updated city ';
+    }
+	if (isset($_POST['txt_user_state']) && $_POST['txt_user_state'] != '')
+    {
+        $user_state = $_POST['txt_user_state'];
+        $dbo->updateProfileInfo($user_id, $user_state, 'user_state');
+        $successMessage = $successMessage . '- Updated state ';
+    }
+	if (isset($_POST['txt_user_country']) && $_POST['txt_user_country'] != '')
+    {
+        $user_country = $_POST['txt_user_country'];
+        $dbo->updateProfileInfo($user_id, $user_country, 'user_country');
+        $successMessage = $successMessage . '- Updated country ';
+    }
+	if (isset($_POST['txt_user_zipcode']) && $_POST['txt_user_zipcode'] != '')
+    {
+        $user_zipcode = $_POST['txt_user_zipcode'];
+        $dbo->updateProfileInfo($user_id, $user_zipcode, 'user_zipcode');
+        $successMessage = $successMessage . '- Updated zipcode ';
     }
     if (isset($_POST['cal_user_dob'])) {
         $user_dob = $_POST['cal_user_dob'];

@@ -57,6 +57,7 @@
 					$_SESSION['sess_user_type'] = 'user';
 					$_SESSION['sess_user_name'] = $user_name;
 					$_SESSION['sess_user_id'] = $user_id;
+					$_SESSION['sess_user_repo'] = '1';
 					//echo $user_id;
 					header('Location: ./settings.php');
 				}
@@ -137,6 +138,7 @@
           <a href="login.php">Login</a>
         </li>
         <li class="active" ><a href="register.php">Register</a></li>
+		<li class="" ><a href="registerband.php">Register Band</a></li>
       </ul>
       <form class="form-register" action="" method="post">
         <h2 class="form-register-heading">Register</h2>
