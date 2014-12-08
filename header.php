@@ -68,7 +68,7 @@ function curPageName() {
                                         "<span class=\"caret\"></span>
                                     </a>
                                     <ul class=\"dropdown-menu\" role=\"menu\">
-                                        <li><a href=\"home.php?user_name=" . $_SESSION['sess_user_name'] . "\">Home</a></li>
+                                        <li><a href=\"home.php\">Home</a></li>
                                         <li><a href=\"settings.php\">Settings</a></li>
                                         <li class=\"divider\"></li>
                                         <li><a href=\"logout.php\">Logout</a></li>

@@ -89,10 +89,22 @@
 		//<![CDATA[
 
 		var customIcons = {
-		  restaurant: {
+		  Restaurant: {
 			icon: 'http://labs.google.com/ridefinder/images/mm_20_blue.png'
 		  },
-		  bar: {
+		  Gardens: {
+			icon: 'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_green.png'
+		  },
+		  Park: {
+			icon: 'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_yellow.png'
+		  },
+		  Stadium: {
+			icon: 'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_black.png'
+		  },
+		  AmphiTheatre: {
+			icon: 'http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_purple.png'
+		  },
+		  Bar: {
 			icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png'
 		  }
 		};
