@@ -88,7 +88,7 @@
 		}
 		if (isset($_POST['txt_concert_capacity']) && $_POST['txt_concert_capacity'] != '')
 		{
-			$concert_capacity= $_POST['txt_concert_tcost'];
+			$concert_capacity= $_POST['txt_concert_capacity'];
 		}
 		else
 		{
@@ -235,7 +235,7 @@
 										</div>
 										<div class="input-group">
 											<label for="txt_sdate">Concert description</label>
-											<textarea class="form-control" name="txt_concert_desription	" placeholder="Concert description..."  id=""></textarea>
+											<textarea class="form-control" name="txt_concert_desription" placeholder="Concert description..."  id="txt_concert_desription"></textarea>
 										</div>
 										<div class="input-group">
 											<label for="txt_sdate">Start date</label>

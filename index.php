@@ -19,7 +19,7 @@ if (isset($_GET['success'])) {
         <title>Home</title>
     </head>
     <body>
-    <?php include 'header.php'; ?>
+    <?php include 'header1.php'; ?>
     <div class="container" style="margin-top: 20px;">
       <?php
             if (isset($error) && $error != '')

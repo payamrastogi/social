@@ -4,7 +4,7 @@
     $dbo = new db();
 	$user_id = '';
 	$successMessage = '';
-	if(isset($_GET['delete_list_id']) && isset($_GET['user_name']) && isset($_GET['list_name']))
+	if(isset($_GET['delete_list_id']) && isset($_GET['list_name']))
 	{
 		$list_id = $_GET['delete_list_id'];
 		$user_id = $_SESSION['sess_user_id'];

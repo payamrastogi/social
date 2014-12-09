@@ -24,14 +24,25 @@
             /**
             *   Returns false if can't log in else returns the user data
             */
-            $queryString = sprintf("SELECT * FROM users WHERE user_name='%s'", $user_name);
-            $query = $this->pdo->query($queryString);
-            $row = $query->fetch(PDO::FETCH_ASSOC);
-
-            if ($row && $row['user_password'] == $user_password)
-                return $row;
-            else
-                return false;
+			
+			// define and prepare the sql statement with input parameter: username
+			$queryString = $this->pdo->prepare("SELECT * FROM users WHERE user_name = :user_name");
+			
+            // bind parameters with user-input			
+			$queryString->bindParam(':user_name',$user_name, PDO::PARAM_STR);
+           
+		    // execute prepared query		
+			$queryString->execute();
+			
+			//fetch row associated with user_name input
+			$row = $queryString->fetch();
+						
+			//if user_name input matches with password return log on details else throw exception			   
+			if ($row && $row['user_password'] == $user_password)
+			   return $row;
+			else
+			   return false;
+			          
         }
 		
 		public function verifyBandLogin($user_name, $user_password)
@@ -39,22 +50,41 @@
             /**
             *   Returns false if can't log in else returns the user data
             */
-            $queryString = "SELECT * FROM bands WHERE band_user_name='$user_name'";
-            $query = $this->pdo->query($queryString);
-            $row = $query->fetch(PDO::FETCH_ASSOC);
-
-            if ($row && $row['band_user_password'] == $user_password)
-                return $row;
-            else
-                return false;
-        }
-		
+			
+			// define and prepare the sql statement with input parameter: band name
+			$queryString = $this->pdo->prepare("SELECT * FROM bands WHERE band_user_name=:band_user_name");
+			
+			// bind parameters with user-input	
+			$queryString->bindParam(':band_user_name',$user_name, PDO::PARAM_STR);
+			
+			// execute prepared query	
+			$queryString->execute();
+			
+			//fetch row associated with user_name input
+			$row = $queryString->fetch();
+			
+			//if band name input matches with password return band details else throw exception	
+			if ($row && $row['band_user_password'] == $user_password)
+			   return $row;
+			else
+			   return false;
+}
+			
 		 public function doLogout($user_id, $score)
         {
-			//echo "yry";
-            $queryString ="Update users set user_laccess = now(),user_repo = user_repo+$score where user_id='$user_id'";
-            $query = $this->pdo->query($queryString);
-            return $query;
+			try
+			{
+				$query = "Update users set user_laccess = now(),user_repo = user_repo+ :score where user_id= :user_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':score',$score, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
         }
 		
         public function close()
@@ -63,18 +93,46 @@
         }
         public function userExists($username)
         {
-            $queryString ="SELECT * FROM `users` WHERE user_name = '$username'";
-            $query = $this->pdo->query($queryString);
-
-            return ($query->rowCount() > 0) ? true : false;
+            // define and prepare the sql statement with input parameter: band name
+			$queryString = $this->pdo->prepare("SELECT * FROM users WHERE user_name = :user_name");
+			
+			// bind parameters with user-input	
+			$queryString->bindParam(':user_name',$user_name, PDO::PARAM_STR);
+			
+			// execute prepared query
+			$queryString->execute();
+			
+			// if there was a row selected (user name match found in the database)
+			if($queryString->rowCount())
+			   return true;
+			// otherwise if a row wasn't selected (no user name match found in the database)   
+			elseif(!$queryString->rowCount())  
+			// display error message 
+			   return false;
+			
+			
         }
 		
 		public function bandExists($bandname)
         {
-            $queryString ="SELECT * FROM `bands` WHERE band_name = '$bandname'";
-            $query = $this->pdo->query($queryString);
-
-            return ($query->rowCount() > 0) ? true : false;
+            // define and prepare the sql statement with input parameter: band name
+			$queryString = $this->pdo->prepare("SELECT * FROM bands WHERE band_name = :band_name");
+			
+			// bind parameters with user-input	
+			$queryString->bindParam(':band_name',$band_name, PDO::PARAM_STR);
+			
+			// execute prepared query
+			$queryString->execute();
+			
+			// if there was a row selected band name match found in the database)
+			if($queryString->rowCount())
+			   return true;
+			// otherwise if a row wasn't selected (no band name match found in the database)   
+			elseif(!$queryString->rowCount())  
+			// display error message 
+			   return false;
+			
+			
         }
 
         public function getAllUsers()
@@ -82,71 +140,133 @@
             /**
             *   Returns a query
             */
-            $queryString = "SELECT * FROM `users` INNER JOIN userDetail on users.username=userDetail.username";
-            $query = $this->pdo->query($queryString);
-
-            return $query;
+			
+			$queryString = $this->pdo->prepare("SELECT * FROM users INNER JOIN userDetail on users.username= userDetail.username");
+			$queryString->execute();
+			return $queryString;
+			
+            
         }
 
         public function getUserDetails($user_id)
         {
-            $queryString = "SELECT * FROM users INNER JOIN userDetails on users.user_id=userDetails.user_id WHERE users.user_id LIKE '$user_id'";
-            $query = $this->pdo->query($queryString);
-
-            return $query;
+            try
+			{
+			$query = "SELECT * FROM users INNER JOIN userDetails on users.user_id = userDetails.user_id WHERE users.user_id LIKE :user_id";
+			$queryString = $this->pdo->prepare($query);
+			$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+			$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+			echo $pe->getMessage();
+			}
+			return $queryString;
+			
+			
         }
 		
 		public function getLocations()
         {
-            $queryString = "SELECT * FROM locations;";
-            $query = $this->pdo->query($queryString);
-            return $query;
+            $queryString = $this->pdo->prepare("SELECT * FROM locations");
+			$queryString->execute();
+			return $queryString;
+			
+			
         }
 		
 		public function getBands()
         {
-            $queryString = "SELECT * FROM bands;";
-            $query = $this->pdo->query($queryString);
-            return $query;
+            $queryString = $this->pdo->prepare("SELECT * FROM bands");
+			$queryString->execute();
+			return $queryString; 
+			
+			
         } 
 		
 		public function getShops()
         {
-            $queryString = "SELECT * FROM ticketshops;";
-            $query = $this->pdo->query($queryString);
-            return $query;
+            $queryString = $this->pdo->prepare("SELECT * FROM ticketshops");
+			$queryString->execute();
+			return $queryString; 
+			
+			
         } 
 		
 		 public function getBandDetails($band_id)
         {
-            $queryString = "SELECT band_id, band_name, band_website, band_members FROM bands where band_id = '$band_id'";
-            $query = $this->pdo->query($queryString);
-            return $query;
+            try
+			{
+			$query = "SELECT band_id, band_name, band_website, band_members FROM bands where band_id = :band_id";
+			$queryString = $this->pdo->prepare($query);
+			$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+			$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+			echo $pe->getMessage();
+			}
+			return $queryString; 
+			
+			/* $queryString = $this->pdo->prepare("SELECT band_id, band_name, band_website, band_members FROM bands where band_id = $band_id");
+			$queryString->execute();
+			return $queryString; */
+			
+			
         }
 		
 		public function getUserId($user_name)
 		{
-			$queryString = "SELECT * FROM users WHERE users.user_name LIKE '$user_name'";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+			$query = "SELECT * FROM users WHERE users.user_name LIKE :user_name";
+			$queryString = $this->pdo->prepare($query);
+			$queryString->bindParam(':user_name',$user_name, PDO::PARAM_INT);
+			$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+			echo $pe->getMessage();
+			}
+			return $queryString; 
+			
+			/* $queryString = $this->pdo->prepare("SELECT * FROM users WHERE users.user_name LIKE $user_name");
+			$queryString->execute();
+			return $queryString; */  
+			
+			
 		}
 		
 		public function getBandId($band_name)
 		{
-			$queryString = "SELECT band_id, band_name, band_members, band_website FROM bands WHERE bands.band_name LIKE '$band_name'";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "SELECT band_id, band_name, band_members, band_website FROM bands WHERE bands.band_name LIKE '%$band_name%';";
+				$queryString = $this->pdo->prepare($query);
+				//$queryString->bindParam(':band_name',$band_name, PDO::PARAM_STR);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getBandMembers($band_id)
 		{
-			$queryString = "Select u2.user_id,b.inband_position, b.band_joinedon, u2.user_fname, u2.user_lname, u2.user_dob, u1.user_name
-							from bandmembers b, userdetails u2, users u1
-							where u1.user_id = b.user_id
-							and u2.user_id = u1.user_id
-							and b.band_id = '$band_id';";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "Select u2.user_id,b.inband_position, b.band_joinedon, u2.user_fname, u2.user_lname, u2.user_dob, u1.user_name from bandmembers b, userdetails u2, users u1 where u1.user_id = b.user_id and u2.user_id = u1.user_id and b.band_id = :band_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getAllBandMembers($band_id, $start, $goFor)
@@ -234,10 +354,6 @@
 			}
 			else
 			{
-				echo "hello1234";
-				echo $band_id;
-				echo $user_id;
-				echo $inband_position;
 				$queryInsert = "Insert into bandmembers (band_id, user_id, inband_position) values ($band_id, $user_id, '$inband_position');";
 				$queryResult= $this->pdo->query($queryInsert);
 				return true;
@@ -246,32 +362,50 @@
 		
 		public function getBandGenres($band_id)
 		{
-			$queryString = "Select g.genre_id, g.genre_name 
-							from genres g, bandgenres b
-							where g.genre_id = b.genre_id
-							and b.band_id = '$band_id'";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "Select g.genre_id, g.genre_name from genres g, bandgenres b where g.genre_id = b.genre_id and b.band_id = :band_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getUserGenres($user_id)
 		{
-			$queryString = "Select g.genre_id, g.genre_name 
-							from genres g, usergenres u
-							where g.genre_id = u.genre_id
-							and u.user_id = '$user_id'";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "Select g.genre_id, g.genre_name from genres g, usergenres u where g.genre_id = u.genre_id and u.user_id = :user_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getPerformingConcerts($band_id)
 		{
-			$queryString = "select c.concert_id, c.concert_name, c.concert_sdate, c.concert_description
-							from concerts c, performing p
-							where p.band_id = '$band_id'
-							and c.concert_id = p.concert_id;";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select c.concert_id, c.concert_name, c.concert_sdate, c.concert_description from concerts c, performing p where p.band_id = :band_id and c.concert_id = p.concert_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		public function getBandConcert($band_id,$start, $goFor)
 		{
@@ -339,28 +473,50 @@
 		}
 		public function getPerformingBands($concert_id)
 		{
-			$queryString = "select b.band_name, b.band_id
-							from bands b, performing p
-							where b.band_id = p.band_id
-							and p.concert_id = '$concert_id';";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select b.band_name, b.band_id from bands b, performing p where b.band_id = p.band_id and p.concert_id = :concert_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getConcertDetails($concert_id)
 		{
-			$queryString = "select concert_id, concert_name, concert_sdate, concert_stime, concert_edate,concert_etime, concert_lid, concert_capacity, concert_tcost, concert_description from concerts where concert_id = '$concert_id';";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select concert_id, concert_name, concert_sdate, concert_stime, concert_edate,concert_etime, concert_lid, concert_capacity, concert_tcost, concert_description from concerts where concert_id = :concert_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getConcertId($concert_name)
 		{
-			$queryString = "select concert_id
-							from concerts
-							where concert_name like '%$concert_name%';";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select concert_id from concerts where concert_name like '%:concert_name%';";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':concert_name',$concert_name, PDO::PARAM_STR);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;		
 		}
 		public function getUpcomingConcert($start, $goFor)
 		{
@@ -543,11 +699,18 @@
 		
 		public function getNumberOfFans($band_id)
 		{
-			$queryString = "select count(*) as total_fans 
-							from fanof
-							where band_id ='$band_id';";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select count(*) as total_fans from fanof where band_id = :band_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getTicketShopDetails($concert_id)
@@ -568,68 +731,122 @@
 		
 		public function getThisMonthConcerts($user_id)
 		{
-			$queryString = "select c.concert_sdate,c.concert_name, c.concert_id  
-							from plans p , concerts c
-							where p.user_id = '$user_id'
-							and p.concert_id = c.concert_id
-							and month(concert_sdate) = month(now())
-							and plan <> 'No';";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select c.concert_sdate,c.concert_name, c.concert_id from calendar p , concerts c where p.user_id = :user_id and p.concert_id = c.concert_id and month(concert_sdate) = month(now());";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getAverageRating($concert_id)
 		{
-			$queryString = "select avg(rating) as avg_rating, concert_id 
-							from plans
-							where concert_id = '$concert_id'
-							and rated='yes';";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select avg(rating) as avg_rating, concert_id from plans where concert_id = :concert_id and rated='yes';";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;	
 		}
 		
 		public function updatingRating($concert_id, $user_id, $rating)
 		{
-			$queryString = "Update plans set rating = '$rating'
-							where concert_id='$concert_id'
-								and user_id = '$user_id';";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "Update plans set rating = :rating where concert_id= :concert_id and user_id = :user_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':rating',$concert_id, PDO::PARAM_STR);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getReviews($concert_id)
 		{
-			$queryString = "select u1.user_id, p.user_review, u1.user_fname, u1.user_lname, u2.user_name, p.review_atime
-							from plans p, userdetails u1, users u2
-							where p.concert_id = '$concert_id'
-							and p.user_id = u1.user_id	
-							and u1.user_id = u2.user_id
-							and p.reviewed = 'yes';
-							order by p.review_atime desc";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "select u1.user_id, p.user_review, u1.user_fname, u1.user_lname, u2.user_name, p.review_atime from plans p, userdetails u1, users u2 where p.concert_id = :concert_id and p.user_id = u1.user_id and u1.user_id = u2.user_id and p.reviewed = 'yes';";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function updateReview($user_id, $concert_id, $review)
 		{
-			$queryString ="SELECT * FROM plans WHERE user_id = '$user_id' and  concert_id='$concert_id';";
-            $query = $this->pdo->query($queryString);
-
-            if($query->rowCount() > 0)
+			try
 			{
-				$queryString = "Update plans 
-								set user_review = '$review',
-								reviewed = 'yes'
-								where user_id='$user_id'
-								and concert_id ='$concert_id';";
+				$query = "SELECT * FROM plans WHERE user_id = :user_id and concert_id = :concert_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+            if($queryString->rowCount() > 0)
+			{
+				$query = "Update plans set user_review = '$review',reviewed = 'yes' where user_id='$user_id' and concert_id ='$concert_id';";
 			}
 			else
 			{
-				$queryString = "Insert into plans (user_id, concert_id, user_review, reviewed) values ('$user_id', '$concert_id', '$review', 'yes');";
+				$query = "Insert into plans (user_id, concert_id, user_review, reviewed) values ('$user_id', '$concert_id', '$review', 'yes');";
 			}
+			$queryString = $this->pdo->query($query);
+			return $queryString;
+		}
+		public function updateUserReview($by_user_id, $to_user_id, $review)
+		{
+			$queryString = "Insert into userreviews (to_user_id, by_user_id, user_review) values ('$to_user_id','$by_user_id','$review');";
 			$query = $this->pdo->query($queryString);
+			$query->execute();
+			$queryString1 = "select last_insert_id() as id";
+			$query1 = $this->pdo->query($queryString1);
+			$row = $query1->fetch(PDO::FETCH_ASSOC);
+			$id = $row['id'];
+			$queryString2 = "delete from userreviews where id=$id";
+			$query2 = $this->pdo->query($queryString2);
 		}
 		
+		public function getUserReviews($user_id)
+		{
+			try
+			{
+				$query = "select * from userreviews where to_user_id = $user_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
+		}
 		public function addIntoCalendar($user_id, $concert_id)
 		{
 			if (!$this->checkCalendarEntry($user_id, $concert_id))
@@ -642,10 +859,19 @@
 		
 		public function checkCalendarEntry($user_id, $concert_id)
 		{
-			$queryString ="SELECT * FROM calendar WHERE user_id = '$user_id' and concert_id = '$concert_id'";
-            $query = $this->pdo->query($queryString);
-
-            return ($query->rowCount() > 0) ? true : false;
+			try
+			{
+				$query = "SELECT * FROM calendar WHERE user_id = :user_id and concert_id = :concert_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return ($queryString->rowCount() > 0) ? true : false;
 		}
 		
         public function searchUsers($searchTerm, $start, $goFor)
@@ -846,54 +1072,97 @@
         }
 		public function unfollowUsers($unfollow_uid, $user_id)
 		{
-			$queryString = "delete FROM follows where following_uid=$user_id and followed_uid=$unfollow_uid";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "delete FROM follows where following_uid=:user_id and followed_uid=:unfollow_uid;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':unfollow_uid',$unfollow_uid, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;		
 		}
 		
 		public function unfanBand($band_id, $user_id)
 		{
-			$queryString = "delete FROM fanof where user_id=$user_id and band_id=$band_id";
-			$query = $this->pdo->query($queryString);
-			return $query;
-		}
+			try
+			{
+				$query = "delete FROM fanof where user_id=:user_id and band_id=:band_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
+		}	
 		
 		public function followUsers($follow_uid, $user_id)
 		{
-			$queryString = "Insert into follows(following_uid, followed_uid) values ($user_id, $follow_uid)";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "Insert into follows(following_uid, followed_uid) values (:user_id, :follow_uid)";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':follow_uid',$follow_uid, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function becomeFanOf($user_id, $band_id)
 		{
-			//echo "ljSKD";
-			$queryString = "Insert into fanof (user_id, band_id) values ('$user_id', '$band_id')";
-			$query = $this->pdo->query($queryString);
-			return $query;
+			try
+			{
+				$query = "Insert into fanof (user_id, band_id) values (:user_id, :band_id)";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 
         public function getUserPhotos($username)
         {
-            $queryString = sprintf("SELECT * FROM photos WHERE owner='%s' ORDER BY id DESC",
-                $username);
-            $query = $this->pdo->query($queryString);
-
-            return $query;
+            $queryString = $this->pdo->prepare("SELECT * FROM photos WHERE owner='%s' ORDER BY id DESC,$username");
+			$queryString->execute();
+			return $queryString;
         }
 
         public function changePassword($username, $newPassword)
         {
-            $queryString = "UPDATE users SET password='$newPassword' WHERE username = '$username'";
-            $query = $this->pdo->query($queryString);
+            $queryString = $this->pdo->prepare("UPDATE users SET password='$newPassword' WHERE username = '$username'");
+			$queryString->execute();
+			return $queryString;
+			
+			
         }
 
         public function deleteUser($username)
         {
             if ($this->userExists($username))
             {
-                $queryString = "DELETE FROM users WHERE username = '$username'";
-                $query = $this->pdo->query($queryString);
+                $queryString = $this->pdo->prepare("DELETE FROM users WHERE username = '$username'");
+			    $queryString->execute();
+			    return $queryString;
+				
+				
             }
             else
                 return false;
@@ -1047,63 +1316,156 @@
 		
 		public function getParentGenre()
         {
-            $queryString = "select distinct level2 as p_genre_id, genre_name as p_genre_name from view_genre_category, genres where level2 = genre_id";
-            $query = $this->pdo->query($queryString);
-            return $query;
+            $queryString = $this->pdo->prepare("select distinct level2 as p_genre_id, genre_name as p_genre_name from view_genre_category, genres where level2 = genre_id");
+			$queryString->execute();
+			return $queryString;
         }
 		
-		public function getSubGenre($p_genre_id){
-			$queryString = "select distinct level3 as s_genre_id, genre_name as s_genre_name from view_genre_category, genres where level2 = '$p_genre_id' and level3 = genre_id;";
-            $query = $this->pdo->query($queryString);
-
-            return $query;
+		public function getSubGenre($p_genre_id)
+		{
+			try
+			{
+				$query = "select distinct level3 as s_genre_id, genre_name as s_genre_name from view_genre_category, genres where level2 = :p_genre_id and level3 = genre_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':p_genre_id',$p_genre_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function getGenreId($genre_name)
 		{
-			$queryString = "select genre_id from genres where genre_name = '$genre_name'";
-			$query = $this->pdo->query($queryString);
-            return $query;
+			try
+			{
+				$query = "select genre_id from genres where genre_name = :genre_name;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':genre_name',$genre_name, PDO::PARAM_STR);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
 		}
 		
 		public function deleteBandGenres($band_id)
         {
-            $queryString = "delete FROM bandgenres WHERE band_id = $band_id";
-            $query = $this->pdo->query($queryString);
+			try
+			{
+				$query = "delete FROM band_genres WHERE band_id = :band_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
         }
 		
 		public function updateBandGenres($genre_id, $band_id)
         {
-            $queryString = "insert into bandgenres (band_id, genre_id) values ($band_id, $genre_id);";
-            $query = $this->pdo->query($queryString);
+			try
+			{
+				$query = "insert into bandgenres (band_id, genre_id) values (:band_id, :genre_id);";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->bindParam(':genre_id',$genre_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
         }
 		
 		public function insertBandConcert($concert_id, $band_id)
         {
-            $queryString = "insert into performing (band_id, concert_id) values ($band_id, $concert_id);";
-            $query = $this->pdo->query($queryString);
+			try
+			{
+				$query = "insert into performing (band_id, concert_id) values (:band_id, :concert_id);";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':band_id',$band_id, PDO::PARAM_INT);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
         }
 		public function insertGenreConcert($concert_id, $genre_id)
         {
-            $queryString = "insert into concertgenres(genre_id, concert_id) values ($genre_id, $concert_id);";
-            $query = $this->pdo->query($queryString);
+			try
+			{
+				$query = "insert into concertgenres(genre_id, concert_id) values (:genre_id, :concert_id);";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':genre_id',$genre_id, PDO::PARAM_INT);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
         }
 		public function insertGenreList($list_id, $genre_id)
         {
-            $queryString = "insert into listgenres(genre_id, list_id) values ($genre_id, $list_id);";
-            $query = $this->pdo->query($queryString);
+			try
+			{
+				$query = "insert into listgenres(genre_id, list_id) values (:genre_id, :list_id);";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':genre_id',$genre_id, PDO::PARAM_INT);
+				$queryString->bindParam(':list_id',$list_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
         }
 		public function insertShopConcert($concert_id, $shop_id)
         {
-            $queryString = "insert into tickets(shop_id, concert_id) values ($shop_id, $concert_id);";
-            $query = $this->pdo->query($queryString);
+			try
+			{
+				$query = "Insert into tickets(shop_id, concert_id) values (:shop_id, :concert_id);";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':shop_id',$shop_id, PDO::PARAM_INT);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;	
         }
-        public function newPhoto($username, $album, $url, $name)
+		
+        public function addPhoto($user_id,$user_image)
         {
-            $queryString = sprintf(
-            "INSERT INTO photos (owner, album, name, url) VALUES ('%s','%s', '%s','%s')",
-            $username, $album, $name, $url);
-            $query = $this->pdo->query($queryString);
+           try
+			{
+				$query = "update userdetails set user_image = :user_image where user_id=:user_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':user_image',$user_image, PDO::PARAM_STR);
+				$queryString->bindParam(':user_id',$user_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;	
         }
 		
 		public function generateMapXML($location_id)
@@ -1182,11 +1544,18 @@
 		
 		public function getListConcerts($list_id)
         {
-            $queryString = "select * from lists";
-            if (str_replace(' ', '', $list_id) != '')
-                $queryString = $queryString . " where list_id='$list_id';";
-            $query = $this->pdo->query($queryString);
-            return $query;
+			try
+			{
+				$query = "select * from lists where list_id= :list_id;";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':list_id',$list_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
         }
 		
 		public function deleteList($list_id,$user_id)
@@ -1238,8 +1607,19 @@
 		
 		public function addConcertToList($list_id, $concert_id)
         {
-            $queryString = "Insert into lists(list_id, concert_id) values ('$list_id', '$concert_id');";
-            $query = $this->pdo->query($queryString);
+			try
+			{
+				$query = "Insert into lists(list_id, concert_id) values (:list_id, :concert_id);";
+				$queryString = $this->pdo->prepare($query);
+				$queryString->bindParam(':list_id',$list_id, PDO::PARAM_INT);
+				$queryString->bindParam(':concert_id',$concert_id, PDO::PARAM_INT);
+				$queryString->execute();
+			}
+			catch(PDOException $pe)
+			{
+				echo $pe->getMessage();
+			}
+			return $queryString;
         }
 		
 		public function getRecommendedConcert($user_id)
