@@ -1,6 +1,7 @@
 Site selection for Data center
 Aspects such as proximity to available power grids, telecommunications infrastructure, networking services, transportation lines and emergency services can affect costs, risk, security and other factors to be taken into consideration for data center design. Location affects data center design also because the climatic conditions dictate what cooling technologies should be deployed. In turn this impacts uptime and the costs associated with cooling.[30] For example, the topology and the cost of managing a data center in a warm, humid climate will vary greatly from managing one in a cool, dry climate.
 source : http://en.wikipedia.org/wiki/Data_center
+http://www.sapdatacenter.com/article/data_center_functionality/#!
 
 
 Today, largely because of remote access capabilities, data centers can be built anywhere in the world and be accessible from anywhere there is an Internet connection. As businesses have become more cost-conscious and more concerned about the environmental impact of technology, their data center location criteria have changed considerably. The top four key factors that need to be considered when choosing a data center’s physical location are:
@@ -32,7 +33,7 @@ http://www.hpl.hp.com/techreports/2005/HPL-2005-107R1.pdf
 
 
 http://www.greendatacenter.ch/enus/Locationbenefits.aspx
-Switzerland is-considered to be one of the best data center locations in the world. The Reasons for choosing Switzerland as a datacenter location are its top class infrastructures, top quality standards, high level of legal security, economic and social stability, and comprehensive data protection.
+Switzerland is-considered to be one of the best data center locations in the world. The Reasons for choosing Switzerland as a datacenter location are its top class infrastructures, top quality standards, high level of legal security, economic and social stability, and comprehensive data fdsprotection.
 
 
 http://www.disaster-report.com/2013/02/natural-disasters-in-russia-2013.html
